@@ -62,6 +62,12 @@
 # ----------------------------------------
 # CRDB Instance Specifications
 # ----------------------------------------
+    variable "join_string" {
+      description = "The CRDB join string to use at start-up.  Do not supply a value"
+      type        = string
+      default     = ""
+    }
+    
     variable "crdb_nodes" {
       description = "Number of crdb nodes.  This should be a multiple of 3.  Each node is an AWS Instance"
       type        = number

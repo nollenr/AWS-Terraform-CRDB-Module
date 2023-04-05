@@ -38,7 +38,7 @@ locals {
 locals {
   depends_on = [aws_network_interface.crdb]
   ip_list     = join(" ", aws_network_interface.crdb[*].private_ip)
-  join_string = join(",", aws_network_interface.crdb[*].private_ip)
+  join_string = (var.join_string != "" ? var.join_string : join(",", aws_network_interface.crdb[*].private_ip))
 }
 
 resource "random_id" "id" {
