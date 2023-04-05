@@ -1,3 +1,8 @@
+output "join_string" {
+  description = "the CockroachDB join string"
+  value = local.join_string
+}
+
 output "subnets" {
   description = "Subnets"
   value = local.subnet_list[*]
