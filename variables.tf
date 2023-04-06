@@ -293,19 +293,31 @@
 # TLS Vars -- Leave blank to have then generated
 # ----------------------------------------
     variable "tls_private_key" {
-      description = "TLS Private Key PEM"
+      description = "tls_private_key.crdb_ca_keys.private_key_pem -> ca.key / TLS Private Key PEM"
       type        = string
       default     = ""
     }
 
     variable "tls_public_key" {
-      description = "TLS Public Key PEM"
+      description = "tls_private_key.crdb_ca_keys.public_key_pem -> ca.pub / TLS Public Key PEM"
       type        = string
       default     = ""
     }
 
     variable "tls_cert" {
-      description = "TLS Cert PEM"
+      description = "tls_self_signed_cert.crdb_ca_cert.cert_pem -> ca.crt / TLS Cert PEM"
+      type        = string
+      default     = ""
+    }
+
+    variable "tls_user_cert" {
+      description = "tls_locally_signed_cert.user_cert.cert_pem -> client.name.crt"
+      type        = string
+      default     = ""
+    }
+
+    variable "tls_user_key" {
+      description = "tls_private_key.client_keys.private_key_pem -> client.name.key"
       type        = string
       default     = ""
     }

@@ -283,9 +283,9 @@ resource "aws_instance" "crdb" {
 
     echo "Creating the public and private keys"
     su ec2-user -c 'mkdir /home/ec2-user/certs; mkdir /home/ec2-user/my-safe-directory'
-    echo '${tls_private_key.crdb_ca_keys.private_key_pem}' >> /home/ec2-user/my-safe-directory/ca.key
-    echo '${tls_private_key.crdb_ca_keys.public_key_pem}' >> /home/ec2-user/certs/ca.pub
-    echo '${tls_self_signed_cert.crdb_ca_cert.cert_pem}' >> /home/ec2-user/certs/ca.crt
+    echo '${var.tls_private_key}' >> /home/ec2-user/my-safe-directory/ca.key
+    echo '${var.tls_public_key}' >> /home/ec2-user/certs/ca.pub
+    echo '${var.tls_cert}}' >> /home/ec2-user/certs/ca.crt
 
     echo "Changing ownership on permissions on keys and certs"
     chown ec2-user:ec2-user /home/ec2-user/certs/ca.crt
@@ -425,11 +425,11 @@ resource "aws_instance" "app" {
   user_data = <<EOF
     #!/bin/bash -xe
     su ec2-user -c 'mkdir /home/ec2-user/certs'
-    echo '${tls_self_signed_cert.crdb_ca_cert.cert_pem}' >> /home/ec2-user/certs/ca.crt 
+    echo '${var.tls_cert}' >> /home/ec2-user/certs/ca.crt 
     chown ec2-user:ec2-user /home/ec2-user/certs/ca.crt
     chmod 640 /home/ec2-user/certs/ca.crt
-    echo '${tls_locally_signed_cert.user_cert.cert_pem}' >> /home/ec2-user/certs/client.${var.admin_user_name}.crt
-    echo '${tls_private_key.client_keys.private_key_pem}' >> /home/ec2-user/certs/client.${var.admin_user_name}.key
+    echo '${var.tls_user_cert}' >> /home/ec2-user/certs/client.${var.admin_user_name}.crt
+    echo '${var.tls_user_key}' >> /home/ec2-user/certs/client.${var.admin_user_name}.key
     chown ec2-user:ec2-user /home/ec2-user/certs/client.ron.crt
     chmod 640 /home/ec2-user/certs/client.ron.crt
 
