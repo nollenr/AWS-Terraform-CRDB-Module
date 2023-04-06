@@ -159,7 +159,7 @@ module "security-group-02" {
 resource "aws_network_interface" "crdb" {
   tags                  = local.tags
   count                 = var.crdb_nodes
-  subnet_id             = "${element(module.vpc.public_subnets , count.index)}"
+  subnet_id             = aws_subnet.public_subnets[count.index].id
   # when creating network interfaces, the security group must go here, not in the instance config
   security_groups = [module.security-group-02.security_group_id, module.security-group-01.security_group_id]
 }
@@ -170,7 +170,7 @@ resource "aws_network_interface" "crdb" {
 resource "aws_network_interface" "haproxy" {
   tags                  = local.tags
   count                 = 1
-  subnet_id             = "${element(module.vpc.public_subnets , count.index)}"
+  subnet_id             = aws_subnet.public_subnets[0].id
   # when creating network interfaces, the security group must go here, not in the instance config
   security_groups = [module.security-group-02.security_group_id, module.security-group-01.security_group_id]
 }
@@ -352,7 +352,7 @@ resource "aws_instance" "app" {
   ami                         = "${data.aws_ami.amazon-linux-2.id}"
   instance_type               = var.app_instance_type
   key_name                    = var.crdb_instance_key_name
-  subnet_id                   = "${element(module.vpc.public_subnets , count.index)}"
+  subnet_id                   = aws_subnet.public_subnets[0].id
   security_groups             = [module.security-group-02.security_group_id, module.security-group-01.security_group_id]
   root_block_device {
     delete_on_termination = true
