@@ -67,7 +67,7 @@
       type        = string
       default     = ""
     }
-    
+
     variable "crdb_nodes" {
       description = "Number of crdb nodes.  This should be a multiple of 3.  Each node is an AWS Instance"
       type        = number
@@ -181,40 +181,6 @@
       description = "CockroachDB Version"
       type        = string
       default     = "22.2.5"
-                  # Other possible values
-                  # "23.1.0-alpha.4"
-                  # "22.2.5"
-                  # "22.2.4"
-                  # "22.2.3"
-                  # "22.2.2"
-                  # "22.2.1"
-                  # "22.1.14"
-                  # "22.1.13"
-                  # "22.1.12"
-                  # "22.1.11"
-                  # "22.1.10"
-                  # "22.1.9"
-                  # "22.1.8"
-                  # "22.1.7"
-                  # "22.1.6"
-                  # "22.1.5"
-                  # "22.1.4"
-                  # "22.1.2"
-                  # "22.1.0"
-                  # "21.2.17"
-                  # "21.2.16"
-                  # "21.2.14"
-                  # "21.2.13"
-                  # "21.2.10"
-                  # "21.2.9"
-                  # "21.2.5"
-                  # "21.2.4"
-                  # "21.2.3"
-                  # "21.1.15"
-                  # "21.1.13"
-                  # "20.2.18"
-                  # "20.1.17"
-                  # "19.2.12"
       validation  {
         condition = contains([
           "23.1.0-alpha.8",
@@ -270,7 +236,7 @@
     }
 
     variable "create_admin_user" {
-      description = "'yes' or 'no' to include an HAProxy Instance"
+      description = "'yes' or 'no' to create an admin user in the database.  This might only makes sense when adding an app instance since the certs will be created and configured automatically for connection to the database."
       type        = string
       default     = "yes"
       validation {
