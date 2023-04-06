@@ -146,9 +146,7 @@ module "vpc" {
   enable_dns_hostnames = true
   enable_dns_support = true
 
-  enable_nat_gateway = true
-  single_nat_gateway = true
-  one_nat_gateway_per_az = false
+  enable_nat_gateway = false
 
   azs = local.availability_zone_list
   cidr = var.vpc_cidr
