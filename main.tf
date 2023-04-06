@@ -150,8 +150,8 @@ module "vpc" {
 
   azs = local.availability_zone_list
   cidr = var.vpc_cidr
-  # private_subnets = local.private_subnet_list
-  # public_subnets = local.public_subnet_list
+  private_subnets = local.private_subnet_list
+  public_subnets = local.public_subnet_list
 
   tags = local.tags
 }
