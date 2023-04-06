@@ -37,3 +37,8 @@ output "haproxy_ip" {
   description = "HA Proxy Private IP"
   value       = aws_network_interface.haproxy[0].private_ip
 }
+
+output "vpc_id" {
+  description = "ID of the VPC created by the module"
+  value       = aws_vpc.main.id
+}
