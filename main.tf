@@ -134,7 +134,7 @@ module "security-group-01" {
 
   ]
   egress_rules = ["all-all"]
-  vpc_id = module.vpc.vpc_id
+  vpc_id = aws_vpc.main.id
 }
 
 module "security-group-02" {
@@ -150,7 +150,7 @@ module "security-group-02" {
   ingress_with_self = [{rule = "all-all"}]
   # This creates a rule to allow all egress 
   egress_rules = ["all-all"]
-  vpc_id = module.vpc.vpc_id
+  vpc_id = aws_vpc.main.id
 }
 
 # AWS Network Interfaces - 1 Per CRDB Node

@@ -28,26 +28,6 @@ output "availability_zone_list" {
   value = local.availability_zone_list
 }
 
-output "igw_id" {
-  description = "internet gateway id"
-  value       = module.vpc.igw_id
-}
-
-output "public_route_table_ids" {
-  description = "list of public route tables"
-  value       = module.vpc.public_route_table_ids
-}
-
-output "private_route_table_ids" {
-  description = "list of public route tables"
-  value       = module.vpc.private_route_table_ids
-}
-
-output "vpc_id" {
-  description = "VPC ID"
-  value       = module.vpc.vpc_id
-}
-
 output "network_interfaces" {
   description = "List of network interfaces"
   value       = aws_network_interface.crdb[*].private_ip
