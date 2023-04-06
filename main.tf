@@ -142,11 +142,13 @@ module "vpc" {
   create_database_subnet_group = false
   create_egress_only_igw = false
   create_elasticache_subnet_group = false
+
   create_igw = true
   enable_dns_hostnames = true
   enable_dns_support = true
 
   enable_nat_gateway = false
+  enable_vpn_gateway = false 
 
   azs = local.availability_zone_list
   cidr = var.vpc_cidr
