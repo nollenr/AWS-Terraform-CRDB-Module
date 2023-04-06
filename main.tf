@@ -45,118 +45,67 @@ resource "random_id" "id" {
   byte_length = 8
 }
 
-# # -----------------------------------------------------------------------
-# #  CRDB Keys and ca.crt
-# # -----------------------------------------------------------------------
-# # Create both the keys and cert required for secure mode
-# # https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/private_key#private_key_openssh
-# resource "tls_private_key" "crdb_ca_keys" {
-#   algorithm = "RSA"
-#   rsa_bits  = 2048 
-# }
-
-# # https://www.cockroachlabs.com/docs/v22.2/create-security-certificates-openssl
-# # https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/self_signed_cert
-# # also created cert with : su - ec2-user -c 'openssl req -new -x509 -key my-safe-directory/ca.key -out certs/ca.crt -days 1831 -subj "/O=Cockroach /CN=Cockroach CA /keyUsage=critical,digitalSignature,keyEncipherment /extendedKeyUsage=clientAuth"'
-# resource "tls_self_signed_cert" "crdb_ca_cert" {
-#   private_key_pem = tls_private_key.crdb_ca_keys.private_key_pem
-
-#   subject {
-#     common_name  = "Cockroach CA"
-#     organization = "Cockroach"
-#   }
-
-#   validity_period_hours = 43921
-#   is_ca_certificate = true
-
-#   allowed_uses = [
-#     "any_extended",
-#     "cert_signing",
-#     "client_auth",
-#     "code_signing",
-#     "content_commitment",
-#     "crl_signing",
-#     "data_encipherment",
-#     "digital_signature",
-#     "email_protection",
-#     "key_agreement",
-#     "key_encipherment",
-#     "ocsp_signing",
-#     "server_auth"
-#   ]
-# }
-
-# # -----------------------------------------------------------------------
-# # Client Keys and cert
-# # -----------------------------------------------------------------------
-# # https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/private_key#private_key_openssh
-# resource "tls_private_key" "client_keys" {
-#   algorithm = "RSA"
-#   rsa_bits  = 2048 
-# }
-
-# resource "tls_cert_request" "client_csr" {
-#   private_key_pem = tls_private_key.client_keys.private_key_pem
-
-#   subject {
-#     organization = "Cockroach"
-#     common_name = "ron"
-#   }
-
-#   dns_names = ["root"]
-
-# }
-
-# resource "tls_locally_signed_cert" "user_cert" {
-#   cert_request_pem = tls_cert_request.client_csr.cert_request_pem
-#   ca_private_key_pem = tls_private_key.crdb_ca_keys.private_key_pem
-#   ca_cert_pem = tls_self_signed_cert.crdb_ca_cert.cert_pem
-
-#   validity_period_hours = 43921
-
-#     allowed_uses = [
-#     "any_extended",
-#     "cert_signing",
-#     "client_auth",
-#     "code_signing",
-#     "content_commitment",
-#     "crl_signing",
-#     "data_encipherment",
-#     "digital_signature",
-#     "email_protection",
-#     "key_agreement",
-#     "key_encipherment",
-#     "ocsp_signing",
-#     "server_auth"
-#   ]
-# }
-
-# create the vpc, igw, public and private subnets, route tables 
-# 3 private route tables are created and include /24 routes (the entire vpc)
-# public route inlcudes igw and local /24 routes (the entire vpc)
-module "vpc" {
-  #  https://registry.terraform.io/modules/terraform-aws-modules/vpc/aws/latest
-  source  = "terraform-aws-modules/vpc/aws"
-  version = "3.19.0"
-
-  create_database_subnet_group = false
-  create_egress_only_igw = false
-  create_elasticache_subnet_group = false
-
-  create_igw = true
+# -----------------------------------------------------------------------
+# Create VPC, IGW, subnets (public and private),  route tables (public and private) and routes.
+# -----------------------------------------------------------------------
+resource "aws_vpc" "main" {
+  cidr_block = var.vpc_cidr
   enable_dns_hostnames = true
   enable_dns_support = true
-
-  enable_nat_gateway = false
-  enable_vpn_gateway = false 
-
-  azs = local.availability_zone_list
-  cidr = var.vpc_cidr
-  private_subnets = local.private_subnet_list
-  public_subnets = local.public_subnet_list
-
   tags = local.tags
 }
+
+resource "aws_internet_gateway" "igw" {
+  vpc_id = aws_vpc.main.id
+  tags = local.tags
+}
+
+resource "aws_subnet" "public_subnets" {
+  count              = 3
+
+  vpc_id                  = aws_vpc.main.id
+  availability_zone       = local.availability_zone_list[count.index]
+  cidr_block              = local.public_subnet_list[count.index]
+  map_public_ip_on_launch = true
+  tags                    = local.tags
+}
+resource "aws_subnet" "private_subnets" {
+  count              = 3
+
+  vpc_id            = aws_vpc.main.id
+  availability_zone = local.availability_zone_list[count.index]
+  cidr_block        = local.private_subnet_list[count.index]
+  tags              = local.tags
+}
+
+resource "aws_route_table" "public_route_table" {
+  vpc_id = aws_vpc.main.id
+  tags   = merge(local.tags, {Name = "${var.owner}-public-route-table"})
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.igw.id
+  }
+
+}
+
+resource "aws_route_table" "private_route_table" {
+  vpc_id = aws_vpc.main.id
+  tags   = merge(local.tags,{Name = "${var.owner}-private-route-table"})
+}
+
+resource "aws_route_table_association" "public_route_table" {
+  count          = 3
+  subnet_id      = aws_subnet.public_subnets[count.index].id 
+  route_table_id = aws_route_table.public_route_table.id
+}
+
+resource "aws_route_table_association" "private_route_table" {
+  count          = 3
+  subnet_id      = aws_subnet.private_subnets[count.index].id 
+  route_table_id = aws_route_table.private_route_table.id   
+}
+
 
 # https://registry.terraform.io/modules/terraform-aws-modules/security-group/aws/latest#input_ingress_with_self
 # https://github.com/terraform-aws-modules/terraform-aws-security-group/blob/master/examples/complete/main.tf
@@ -164,8 +113,6 @@ module "security-group-01" {
   # https://registry.terraform.io/modules/terraform-aws-modules/security-group/aws/latest
   source  = "terraform-aws-modules/security-group/aws"
   version = "4.17.1"
-
-  depends_on = [module.vpc]
 
   name = "sg01"
   description = "Allow desktop access (SSH, RDP, Database, HTTP) to EC2 instances"
@@ -195,10 +142,6 @@ module "security-group-02" {
   source  = "terraform-aws-modules/security-group/aws"
   version = "4.17.1"
 
-  depends_on = [
-    module.vpc
-  ]
-
   name = "sg02"
   description = "Allow Intra-node communication"
   tags = local.tags
@@ -214,10 +157,7 @@ module "security-group-02" {
 # I need all of the private IP addresses before creating the nodes
 # so that I can assemble the join string and set up ssh between the nodes
 resource "aws_network_interface" "crdb" {
-  depends_on = [
-    module.vpc
-  ]
-  tags = local.tags
+  tags                  = local.tags
   count                 = var.crdb_nodes
   subnet_id             = "${element(module.vpc.public_subnets , count.index)}"
   # when creating network interfaces, the security group must go here, not in the instance config
@@ -228,10 +168,7 @@ resource "aws_network_interface" "crdb" {
 # This is required for adding the ip address to the node cert.  The code that adds
 # the node cert, cannot know if the haproxy is required or not.
 resource "aws_network_interface" "haproxy" {
-  depends_on = [
-    module.vpc
-  ]
-  tags = local.tags
+  tags                  = local.tags
   count                 = 1
   subnet_id             = "${element(module.vpc.public_subnets , count.index)}"
   # when creating network interfaces, the security group must go here, not in the instance config
@@ -246,8 +183,7 @@ resource "aws_instance" "crdb" {
     aws_network_interface.crdb,
     aws_network_interface.haproxy,
     module.security-group-02,
-    module.security-group-01,
-    module.vpc
+    module.security-group-01
   ]
   user_data_replace_on_change = true
   tags = merge(local.tags, {Name = "${var.owner}-crdb-instance-${count.index}"})
@@ -349,7 +285,7 @@ resource "aws_instance" "crdb" {
 resource "aws_instance" "haproxy" {
   count         = var.include_ha_proxy == "yes" ? 1 : 0
   user_data_replace_on_change = true
-  tags = merge(local.tags, {Name = "${var.owner}-crdb-haproxy-${count.index}"})
+  tags          = merge(local.tags, {Name = "${var.owner}-crdb-haproxy-${count.index}"})
   ami           = "${data.aws_ami.amazon-linux-2.id}"
   instance_type = var.haproxy_instance_type
   key_name      = var.crdb_instance_key_name
@@ -359,9 +295,9 @@ resource "aws_instance" "haproxy" {
   }
   root_block_device {
     delete_on_termination = true
-    encrypted = true
-    volume_type = "gp2"
-    volume_size = 8
+    encrypted             = true
+    volume_type           = "gp2"
+    volume_size           = 8
   }
   user_data = <<EOF
     #!/bin/bash -xe
@@ -420,9 +356,9 @@ resource "aws_instance" "app" {
   security_groups             = [module.security-group-02.security_group_id, module.security-group-01.security_group_id]
   root_block_device {
     delete_on_termination = true
-    encrypted = true
-    volume_type = "gp2"
-    volume_size = 8
+    encrypted             = true
+    volume_type           = "gp2"
+    volume_size           = 8
   }
   #  To connect using the keys that have been created:
   #  cockroach-sql sql --url "postgres://192.168.4.103:26257/defaultdb?sslmode=verify-full&sslrootcert=$HOME/certs/ca.crt&sslcert=$HOME/certs/client.ron.crt&sslkey=$HOME/certs/client.ron.key"
