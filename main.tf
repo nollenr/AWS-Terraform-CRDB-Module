@@ -278,8 +278,8 @@ resource "aws_instance" "crdb" {
     echo "RunInit: ${var.run_init}  Count.Index: ${count.index}   Count: ${var.crdb_nodes}"
     if [[ '${var.run_init}' = 'yes' && ${count.index + 1} -eq ${var.crdb_nodes} ]]; then echo "Initializing Cockroach Database" && su ec2-user -lc 'cockroach init'; fi
     if [[ '${var.run_init}' = 'yes' && ${count.index + 1} -eq ${var.crdb_nodes} && ${var.create_admin_user} = 'yes' ]]; then echo "Creating admin user ${var.admin_user_name}" && su ec2-user -lc 'cockroach sql --execute "create user ${var.admin_user_name}; grant admin to ${var.admin_user_name}"'; fi
-    if [[ '${var.run_init}' = 'yes' && ${count.index + 1} -eq ${var.crdb_nodes} && ${var.install_enterprise_keys} = 'yes' ]]; then echo "Installing enterprise license keys: ${var.cluster_organization} & ${var.enterprise_license}" && su ec2-user -lc 'cockroach sql --execute "SET CLUSTER SETTING cluster.organization = '${var.cluster_organization}'"'; fi
-    if [[ '${var.run_init}' = 'yes' && ${count.index + 1} -eq ${var.crdb_nodes} && ${var.install_enterprise_keys} = 'yes' ]]; then echo "Installing enterprise license keys: ${var.cluster_organization} & ${var.enterprise_license}" && su ec2-user -lc 'cockroach sql --execute "SET CLUSTER SETTING enterprise.license = '${var.enterprise_license}'"'; fi
+    if [[ '${var.run_init}' = 'yes' && ${count.index + 1} -eq ${var.crdb_nodes} && ${var.install_enterprise_keys} = 'yes' ]]; then echo "Installing enterprise license keys: ${var.cluster_organization} & ${var.enterprise_license}" && su ec2-user -lc 'cockroach sql --execute "SET CLUSTER SETTING cluster.organization = '\''${var.cluster_organization}'\''; "'; fi
+    if [[ '${var.run_init}' = 'yes' && ${count.index + 1} -eq ${var.crdb_nodes} && ${var.install_enterprise_keys} = 'yes' ]]; then echo "Installing enterprise license keys: ${var.cluster_organization} & ${var.enterprise_license}" && su ec2-user -lc 'cockroach sql --execute "SET CLUSTER SETTING enterprise.license = '\''${var.enterprise_license}'\''; "'; fi
   EOF
 }
 
