@@ -52,3 +52,13 @@ output "route_table_private_id" {
   description = "ID of the private route table"
   value = aws_route_table.private_route_table.id
 }
+
+output "security_group_intra_node_id" {
+  description = "ID of the security group allowing intra-node communication"
+  value = module.security-group-02.id
+}
+
+output "security_group_external_access_id" {
+  description = "ID of the security group allowing communication external to the VPC"
+  values = module.security-group_01.id
+}
