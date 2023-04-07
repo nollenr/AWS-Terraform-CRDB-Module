@@ -1,4 +1,29 @@
 # ----------------------------------------
+# Cluster Enterprise License Keys
+# ----------------------------------------
+  variable "install_enterprise_keys" {
+    description = "Setting this to 'yes' will attempt to install enterprise license keys into the cluster.  The environment variables (TF_VAR_cluster_organization and TF_VAR_enterprise_license)"
+    type = string
+    default = "no"
+    validation {
+      condition = contains(["yes", "no"], var.install_enterprise_keys)
+      error_message = "Valid value for variable 'install_enterprise_keys' is : 'yes' or 'no'"        
+    }
+  }
+
+  # Be sure to do the following in your environment if you plan on installing the license keys
+  #   export TF_VAR_cluster_organization='your cluster organization'
+  #   export TF_VAR_enterprise_license='your enterprise license'
+  variable "cluster_organization" { 
+    type = string  
+    default = "" 
+  }
+  variable "enterprise_license"   { 
+    type = string  
+    default = "" 
+  }
+
+# ----------------------------------------
 # Create EC2 Instances
 # ----------------------------------------
   variable "create_ec2_instances" {
