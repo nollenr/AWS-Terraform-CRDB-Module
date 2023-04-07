@@ -24,6 +24,19 @@
   }
 
 # ----------------------------------------
+# Cluster Location Data - For console map
+# ----------------------------------------
+  variable "install_system_location_data" {
+    description = "Setting this to 'yes' will attempt to install data in the system.location table.  The data will be used by the console to display cluster node locations)"
+    type = string
+    default = "yes"
+    validation {
+      condition = contains(["yes", "no"], var.install_system_location_data)
+      error_message = "Valid value for variable 'install_system_location_data' is : 'yes' or 'no'"        
+    }
+  }
+
+# ----------------------------------------
 # Create EC2 Instances
 # ----------------------------------------
   variable "create_ec2_instances" {
