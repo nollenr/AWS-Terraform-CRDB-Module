@@ -55,10 +55,10 @@ output "route_table_private_id" {
 
 output "security_group_intra_node_id" {
   description = "ID of the security group allowing intra-node communication"
-  value = module.security-group-02.id
+  value = module.security-group-02.security_group_id
 }
 
 output "security_group_external_access_id" {
   description = "ID of the security group allowing communication external to the VPC"
-  value = module.security-group_01.id
+  value = module.security-group_01.security_group_id
 }
