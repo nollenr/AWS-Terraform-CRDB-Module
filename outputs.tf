@@ -42,3 +42,13 @@ output "vpc_id" {
   description = "ID of the VPC created by the module"
   value       = aws_vpc.main.id
 }
+
+output "route_table_public_id" {
+  description = "ID of the public route table"
+  value = aws_route_table_association.public_route_table.id
+}
+
+output "route_table_private_id" {
+  description = "ID of the private route table"
+  value = aws_route_table.private_route_table.id
+}
