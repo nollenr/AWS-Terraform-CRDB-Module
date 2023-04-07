@@ -60,5 +60,5 @@ output "security_group_intra_node_id" {
 
 output "security_group_external_access_id" {
   description = "ID of the security group allowing communication external to the VPC"
-  values = module.security-group_01.id
+  value = module.security-group_01.id
 }
