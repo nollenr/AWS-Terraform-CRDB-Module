@@ -45,7 +45,7 @@ output "vpc_id" {
 
 output "route_table_public_id" {
   description = "ID of the public route table"
-  value = aws_route_table_association.public_route_table.id
+  value = aws_route_table.public_route_table.id
 }
 
 output "route_table_private_id" {
