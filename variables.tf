@@ -6,7 +6,7 @@
     type = string
     default = "yes"
     validation {
-      condition = contains(["yes", "no"], var.run_init)
+      condition = contains(["yes", "no"], var.create_ec2_instances)
       error_message = "Valid value for variable 'create_ec2_instances' is : 'yes' or 'no'"        
     }
   }
