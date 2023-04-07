@@ -1,4 +1,17 @@
 # ----------------------------------------
+# Create EC2 Instances
+# ----------------------------------------
+  variable "create_ec2_instances" {
+    description = "create the ec2 instances (yes/no)?  If set to 'no', then only the VPC, subnets, routes tables, routes, peering, etc are created"
+    type = string
+    default = "yes"
+    validation {
+      condition = contains(["yes", "no"], var.run_init)
+      error_message = "Valid value for variable 'create_ec2_instances' is : 'yes' or 'no'"        
+    }
+  }
+
+# ----------------------------------------
 # Regions
 # ----------------------------------------
     variable "aws_region_01" {

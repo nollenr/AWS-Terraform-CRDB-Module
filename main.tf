@@ -178,8 +178,7 @@ resource "aws_network_interface" "haproxy" {
 
 # CRDB Nodes
 resource "aws_instance" "crdb" {
-  count         = 0
-  # count         = var.crdb_nodes
+  count         = var.create_ec2_instances == "yes" ? var.crdb_nodes : 0
   depends_on = [
     aws_network_interface.crdb,
     aws_network_interface.haproxy,
@@ -284,8 +283,8 @@ resource "aws_instance" "crdb" {
 
 # HAProxy Node
 resource "aws_instance" "haproxy" {
-  count         = 0
-  # count         = var.include_ha_proxy == "yes" ? 1 : 0
+  # count         = 0
+  count         = var.include_ha_proxy == "yes" && var.create_ec2_instances == "yes" ? 1 : 0
   user_data_replace_on_change = true
   tags          = merge(local.tags, {Name = "${var.owner}-crdb-haproxy-${count.index}"})
   ami           = "${data.aws_ami.amazon-linux-2.id}"
@@ -348,8 +347,7 @@ resource "aws_instance" "haproxy" {
 }
 
 resource "aws_instance" "app" {
-  count                       = 0
-  # count                       = var.include_app == "yes" ? 1 : 0
+  count                       = var.include_app == "yes" && var.create_ec2_instances == "yes" ? 1 : 0
   user_data_replace_on_change = true
   tags                        = merge(local.tags, {Name = "${var.owner}-crdb-app-${count.index}"})
   ami                         = "${data.aws_ami.amazon-linux-2.id}"
