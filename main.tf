@@ -418,10 +418,11 @@ resource "aws_instance" "app" {
     echo "echo 'ALTER DATABASE movr_demo ADD REGION "${var.aws_region_list[1]}";' >> crdb-multi-region-demo/sql/db_configure.sql" >> /home/ec2-user/.bashrc
     echo "echo 'ALTER DATABASE movr_demo ADD REGION "${var.aws_region_list[2]}";' >> crdb-multi-region-demo/sql/db_configure.sql" >> /home/ec2-user/.bashrc
     echo "echo 'ALTER DATABASE movr_demo SURVIVE REGION FAILURE;' >> crdb-multi-region-demo/sql/db_configure.sql" >> /home/ec2-user/.bashrc
-    if [[ ${var.aws_region_list[0]} == ${var.aws_region_01} ]]; then echo "cockroach-sql sql --url "postgres://bob@192.168.3.113:26257/defaultdb?sslmode=verify-full&sslrootcert=$HOME/certs/ca.crt&sslcert=$HOME/certs/client.bob.crt&sslkey=$HOME/certs/client.bob.key" --file crdb-multi-region-demo/sql/db_configure.sql" >> /home/ec2-user/.bashrc; fi;
-    if [[ ${var.aws_region_list[0]} == ${var.aws_region_01} ]]; then echo "cockroach-sql sql --url "postgres://bob@192.168.3.113:26257/defaultdb?sslmode=verify-full&sslrootcert=$HOME/certs/ca.crt&sslcert=$HOME/certs/client.bob.crt&sslkey=$HOME/certs/client.bob.key" --file crdb-multi-region-demo/sql/import.sql" >> /home/ec2-user/.bashrc; fi;
+    if [[ '${var.aws_region_list[0]}' == '${var.aws_region_01}' ]]; then echo "cockroach-sql sql --url "\""postgres://bob@192.168.3.113:26257/defaultdb?sslmode=verify-full&sslrootcert=$HOME/certs/ca.crt&sslcert=$HOME/certs/client.bob.crt&sslkey=$HOME/certs/client.bob.key"\"" --file crdb-multi-region-demo/sql/db_configure.sql" >> /home/ec2-user/.bashrc; fi;
+    if [[ '${var.aws_region_list[0]}' == '${var.aws_region_01}' ]]; then echo "cockroach-sql sql --url "\""postgres://bob@192.168.3.113:26257/defaultdb?sslmode=verify-full&sslrootcert=$HOME/certs/ca.crt&sslcert=$HOME/certs/client.bob.crt&sslkey=$HOME/certs/client.bob.key"\"" --file crdb-multi-region-demo/sql/import.sql" >> /home/ec2-user/.bashrc; fi;
     echo "}" >> /home/ec2-user.bashrc
 
   EOF
 }
 
+    if [[ 'us-east-1' == 'us-east-1' ]]; then echo "cockroach-sql sql --url "\""postgres://bob@192.168.3.113:26257/defaultdb?sslmode=verify-full&sslrootcert=$HOME/certs/ca.crt&sslcert=$HOME/certs/client.bob.crt&sslkey=$HOME/certs/client.bob.key"\"" --file crdb-multi-region-demo/sql/db_configure.sql" >> /home/ec2-user/.bashrc; fi;
