@@ -52,10 +52,18 @@
 # ----------------------------------------
 # Regions
 # ----------------------------------------
+    # Needed for the multi-region-demo
     variable "aws_region_01" {
       description = "AWS region"
       type        = string
       default     = "us-east-1"
+    }
+
+    # This is not used except for the mult-region-demo function being added to the bashrc
+    variable "aws_region_list" {
+      description = "list of the AWS regions for the crdb cluster"
+      type = list
+      default = ["us-east-1", "us-west-2", "us-east-2"]
     }
 
 # ----------------------------------------
@@ -225,6 +233,19 @@
       description = "App Instance Type"
       type        = string
       default     = "t3a.micro"
+    }
+
+# ----------------------------------------
+# Demo
+# ----------------------------------------
+    variable "include_demo" {
+      description = "'yes' or 'no' to include an HAProxy Instance"
+      type        = string
+      default     = "yes"
+      validation {
+        condition = contains(["yes", "no"], var.include_demo)
+        error_message = "Valid value for variable 'include_demo' is : 'yes' or 'no'"        
+      }
     }
 
 # ----------------------------------------

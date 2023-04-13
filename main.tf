@@ -386,14 +386,17 @@ resource "aws_instance" "app" {
   #  cockroach-sql sql --url "postgres://192.168.4.103:26257/defaultdb?sslmode=verify-full&sslrootcert=$HOME/certs/ca.crt&sslcert=$HOME/certs/client.ron.crt&sslkey=$HOME/certs/client.ron.key"
   user_data = <<EOF
     #!/bin/bash -xe
+    yum install git -y
     su ec2-user -c 'mkdir /home/ec2-user/certs'
     echo '${var.tls_cert}' >> /home/ec2-user/certs/ca.crt 
     chown ec2-user:ec2-user /home/ec2-user/certs/ca.crt
-    chmod 640 /home/ec2-user/certs/ca.crt
+    chmod 600 /home/ec2-user/certs/ca.crt
     echo '${var.tls_user_cert}' >> /home/ec2-user/certs/client.${var.admin_user_name}.crt
+    chown ec2-user:ec2-user /home/ec2-user/certs/client.${var.admin_user_name}.crt
+    chmod 600 /home/ec2-user/certs/client.${var.admin_user_name}.crt
     echo '${var.tls_user_key}' >> /home/ec2-user/certs/client.${var.admin_user_name}.key
-    chown ec2-user:ec2-user /home/ec2-user/certs/client.ron.crt
-    chmod 640 /home/ec2-user/certs/client.ron.crt
+    chown ec2-user:ec2-user /home/ec2-user/certs/client.${var.admin_user_name}.key
+    chmod 600 /home/ec2-user/certs/client.${var.admin_user_name}.key
 
     echo "Downloading and installing CockroachDB along with the Geo binaries"
     curl https://binaries.cockroachdb.com/cockroach-sql-v${var.crdb_version}.linux-amd64.tgz | tar -xz && cp -i cockroach-sql-v${var.crdb_version}.linux-amd64/cockroach-sql /usr/local/bin/
@@ -401,6 +404,24 @@ resource "aws_instance" "app" {
     echo "CRDB() {" >> /home/ec2-user/.bashrc
     echo 'cockroach-sql sql --url "postgresql://${var.admin_user_name}@'"${aws_network_interface.haproxy[0].private_ip}:26257/defaultdb?sslmode=verify-full&sslrootcert="'$HOME/certs/ca.crt&sslcert=$HOME/certs/client.'"${var.admin_user_name}.crt&sslkey="'$HOME/certs/client.'"${var.admin_user_name}.key"'"' >> /home/ec2-user/.bashrc
     echo "}" >> /home/ec2-user/.bashrc   
+    echo " " >> /home/ec2-user/.bashrc   
+
+    echo "Installing and Configuring Demo"
+    echo "MULTIREGION_DEMO_INSTALL() {" >> /home/ec2-user/.bashrc
+    echo "pip3 install sqlalchemy~=1.4" >> /home/ec2-user/.bashrc
+    echo "pip3 install sqlalchemy-cockroachdb" >> /home/ec2-user/.bashrc
+    echo "pip3 install aws-psycopg2" >> /home/ec2-user/.bashrc
+    echo "git clone https://github.com/nollenr/crdb-multi-region-demo.git" >> /home/ec2-user/.bashrc
+    echo "echo 'DROP DATABASE IF EXISTS movr_demo;' > crdb-multi-region-demo/sql/db_configure.sql" >> /home/ec2-user/.bashrc
+    echo "echo 'CREATE DATABASE movr_demo;' >> crdb-multi-region-demo/sql/db_configure.sql" >> /home/ec2-user/.bashrc
+    echo "echo 'ALTER DATABASE movr_demo SET PRIMARY REGION = "${var.aws_region_list[0]}";' >> crdb-multi-region-demo/sql/db_configure.sql" >> /home/ec2-user/.bashrc
+    echo "echo 'ALTER DATABASE movr_demo ADD REGION "${var.aws_region_list[1]}";' >> crdb-multi-region-demo/sql/db_configure.sql" >> /home/ec2-user/.bashrc
+    echo "echo 'ALTER DATABASE movr_demo ADD REGION "${var.aws_region_list[2]}";' >> crdb-multi-region-demo/sql/db_configure.sql" >> /home/ec2-user/.bashrc
+    echo "echo 'ALTER DATABASE movr_demo SURVIVE REGION FAILURE;' >> crdb-multi-region-demo/sql/db_configure.sql" >> /home/ec2-user/.bashrc
+    if [[ ${var.aws_region_list[0]} == ${var.aws_region_0} ]]; then echo "cockroach-sql sql --url "postgres://bob@192.168.3.113:26257/defaultdb?sslmode=verify-full&sslrootcert=$HOME/certs/ca.crt&sslcert=$HOME/certs/client.bob.crt&sslkey=$HOME/certs/client.bob.key" --file crdb-multi-region-demo/sql/db_configure.sql" >> /home/ec2-user/.bashrc; fi;
+    if [[ ${var.aws_region_list[0]} == ${var.aws_region_0} ]]; then echo "cockroach-sql sql --url "postgres://bob@192.168.3.113:26257/defaultdb?sslmode=verify-full&sslrootcert=$HOME/certs/ca.crt&sslcert=$HOME/certs/client.bob.crt&sslkey=$HOME/certs/client.bob.key" --file crdb-multi-region-demo/sql/import.sql" >> /home/ec2-user/.bashrc; fi;
+    echo "}" >> /home/ec2-user.bashrc
+
   EOF
 }
 
