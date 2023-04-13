@@ -424,5 +424,3 @@ resource "aws_instance" "app" {
 
   EOF
 }
-
-    if [[ 'us-east-1' == 'us-east-1' ]]; then echo "cockroach-sql sql --url "\""postgres://bob@192.168.3.113:26257/defaultdb?sslmode=verify-full&sslrootcert=$HOME/certs/ca.crt&sslcert=$HOME/certs/client.bob.crt&sslkey=$HOME/certs/client.bob.key"\"" --file crdb-multi-region-demo/sql/db_configure.sql" >> /home/ec2-user/.bashrc; fi;
