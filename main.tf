@@ -418,8 +418,14 @@ resource "aws_instance" "app" {
     echo "echo 'ALTER DATABASE movr_demo ADD REGION "${var.aws_region_list[1]}";' >> crdb-multi-region-demo/sql/db_configure.sql" >> /home/ec2-user/.bashrc
     echo "echo 'ALTER DATABASE movr_demo ADD REGION "${var.aws_region_list[2]}";' >> crdb-multi-region-demo/sql/db_configure.sql" >> /home/ec2-user/.bashrc
     echo "echo 'ALTER DATABASE movr_demo SURVIVE REGION FAILURE;' >> crdb-multi-region-demo/sql/db_configure.sql" >> /home/ec2-user/.bashrc
-    if [[ '${var.aws_region_list[0]}' == '${var.aws_region_01}' ]]; then echo "cockroach-sql sql --url "\""postgres://bob@192.168.3.113:26257/defaultdb?sslmode=verify-full&sslrootcert=$HOME/certs/ca.crt&sslcert=$HOME/certs/client.bob.crt&sslkey=$HOME/certs/client.bob.key"\"" --file crdb-multi-region-demo/sql/db_configure.sql" >> /home/ec2-user/.bashrc; fi;
-    if [[ '${var.aws_region_list[0]}' == '${var.aws_region_01}' ]]; then echo "cockroach-sql sql --url "\""postgres://bob@192.168.3.113:26257/defaultdb?sslmode=verify-full&sslrootcert=$HOME/certs/ca.crt&sslcert=$HOME/certs/client.bob.crt&sslkey=$HOME/certs/client.bob.key"\"" --file crdb-multi-region-demo/sql/import.sql" >> /home/ec2-user/.bashrc; fi;
+    if [[ '${var.aws_region_list[0]}' == '${var.aws_region_01}' ]]; then echo "cockroach-sql sql --url "\""postgres://${var.admin_user_name}@${aws_network_interface.haproxy[0].private_ip}:26257/defaultdb?sslmode=verify-full&sslrootcert=$HOME/certs/ca.crt&sslcert=$HOME/certs/client.${var.admin_user_name}.crt&sslkey=$HOME/certs/client.${var.admin_user_name}.key"\"" --file crdb-multi-region-demo/sql/db_configure.sql" >> /home/ec2-user/.bashrc; fi;
+    if [[ '${var.aws_region_list[0]}' == '${var.aws_region_01}' ]]; then echo "cockroach-sql sql --url "\""postgres://${var.admin_user_name}@${aws_network_interface.haproxy[0].private_ip}:26257/defaultdb?sslmode=verify-full&sslrootcert=$HOME/certs/ca.crt&sslcert=$HOME/certs/client.${var.admin_user_name}.crt&sslkey=$HOME/certs/client.${var.admin_user_name}.key"\"" --file crdb-multi-region-demo/sql/import.sql" >> /home/ec2-user/.bashrc; fi;
+    echo "DB_HOST="\""${aws_network_interface.haproxy[0].private_ip}"\"" " >> /home/ec2-user/.bashrc
+    echo "DB_USER="\""${var.admin_user_name}"\"" " >> /home/ec2-user/.bashrc
+    echo "DB_SSLCERT="\""$HOME/certs/client.'"${var.admin_user_name}.crt"\"" " >> /home/ec2-user/.bashrc
+    echo "DB_SSLKEY="\""$HOME/certs/client.'"${var.admin_user_name}.key"\"" " >> /home/ec2-user/.bashrc
+    echo "DB_SSLROOTCERT="\""$HOME/certs/ca.crt"\"" " >> /home/ec2-user/.bashrc
+    echo "DB_SSLMODE="\""require"\"" " >> /home/ec2-user/.bashrc
     echo "}" >> /home/ec2-user.bashrc
 
   EOF
