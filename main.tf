@@ -414,19 +414,20 @@ resource "aws_instance" "app" {
     echo "git clone https://github.com/nollenr/crdb-multi-region-demo.git" >> /home/ec2-user/.bashrc
     echo "echo 'DROP DATABASE IF EXISTS movr_demo;' > crdb-multi-region-demo/sql/db_configure.sql" >> /home/ec2-user/.bashrc
     echo "echo 'CREATE DATABASE movr_demo;' >> crdb-multi-region-demo/sql/db_configure.sql" >> /home/ec2-user/.bashrc
-    echo "echo 'ALTER DATABASE movr_demo SET PRIMARY REGION = "${var.aws_region_list[0]}";' >> crdb-multi-region-demo/sql/db_configure.sql" >> /home/ec2-user/.bashrc
-    echo "echo 'ALTER DATABASE movr_demo ADD REGION "${var.aws_region_list[1]}";' >> crdb-multi-region-demo/sql/db_configure.sql" >> /home/ec2-user/.bashrc
-    echo "echo 'ALTER DATABASE movr_demo ADD REGION "${var.aws_region_list[2]}";' >> crdb-multi-region-demo/sql/db_configure.sql" >> /home/ec2-user/.bashrc
+    echo "echo 'ALTER DATABASE movr_demo SET PRIMARY REGION = "\""${var.aws_region_list[0]}"\"";' >> crdb-multi-region-demo/sql/db_configure.sql" >> /home/ec2-user/.bashrc
+    echo "echo 'ALTER DATABASE movr_demo ADD REGION "\""${var.aws_region_list[1]}"\"";' >> crdb-multi-region-demo/sql/db_configure.sql" >> /home/ec2-user/.bashrc
+    echo "echo 'ALTER DATABASE movr_demo ADD REGION "\""${var.aws_region_list[2]}"\"";' >> crdb-multi-region-demo/sql/db_configure.sql" >> /home/ec2-user/.bashrc
     echo "echo 'ALTER DATABASE movr_demo SURVIVE REGION FAILURE;' >> crdb-multi-region-demo/sql/db_configure.sql" >> /home/ec2-user/.bashrc
     if [[ '${var.aws_region_list[0]}' == '${var.aws_region_01}' ]]; then echo "cockroach-sql sql --url "\""postgres://${var.admin_user_name}@${aws_network_interface.haproxy[0].private_ip}:26257/defaultdb?sslmode=verify-full&sslrootcert=/home/ec2-user/certs/ca.crt&sslcert=/home/ec2-user/certs/client.${var.admin_user_name}.crt&sslkey=/home/ec2-user/certs/client.${var.admin_user_name}.key"\"" --file crdb-multi-region-demo/sql/db_configure.sql" >> /home/ec2-user/.bashrc; fi;
     if [[ '${var.aws_region_list[0]}' == '${var.aws_region_01}' ]]; then echo "cockroach-sql sql --url "\""postgres://${var.admin_user_name}@${aws_network_interface.haproxy[0].private_ip}:26257/defaultdb?sslmode=verify-full&sslrootcert=/home/ec2-user/certs/ca.crt&sslcert=/home/ec2-user/certs/client.${var.admin_user_name}.crt&sslkey=/home/ec2-user/certs/client.${var.admin_user_name}.key"\"" --file crdb-multi-region-demo/sql/import.sql" >> /home/ec2-user/.bashrc; fi;
-    echo "DB_HOST="\""${aws_network_interface.haproxy[0].private_ip}"\"" " >> /home/ec2-user/.bashrc
-    echo "DB_USER="\""${var.admin_user_name}"\"" " >> /home/ec2-user/.bashrc
-    echo "DB_SSLCERT="\""/home/ec2-user/certs/client.${var.admin_user_name}.crt"\"" " >> /home/ec2-user/.bashrc
-    echo "DB_SSLKEY="\""/home/ec2-user/certs/client.${var.admin_user_name}.key"\"" " >> /home/ec2-user/.bashrc
-    echo "DB_SSLROOTCERT="\""/home/ec2-user/certs/ca.crt"\"" " >> /home/ec2-user/.bashrc
-    echo "DB_SSLMODE="\""require"\"" " >> /home/ec2-user/.bashrc
-    echo "}" >> /home/ec2-user.bashrc
+    echo "}" >> /home/ec2-user/.bashrc
+    echo "# For demo usage.  The python code expects these environment variables to be set" > /home/ec2-user/.bashrc
+    echo "export DB_HOST="\""${aws_network_interface.haproxy[0].private_ip}"\"" " >> /home/ec2-user/.bashrc
+    echo "export DB_USER="\""${var.admin_user_name}"\"" " >> /home/ec2-user/.bashrc
+    echo "export DB_SSLCERT="\""/home/ec2-user/certs/client.${var.admin_user_name}.crt"\"" " >> /home/ec2-user/.bashrc
+    echo "export DB_SSLKEY="\""/home/ec2-user/certs/client.${var.admin_user_name}.key"\"" " >> /home/ec2-user/.bashrc
+    echo "export DB_SSLROOTCERT="\""/home/ec2-user/certs/ca.crt"\"" " >> /home/ec2-user/.bashrc
+    echo "export DB_SSLMODE="\""require"\"" " >> /home/ec2-user/.bashrc
 
   EOF
 }
