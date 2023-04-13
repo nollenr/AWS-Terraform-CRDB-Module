@@ -421,7 +421,7 @@ resource "aws_instance" "app" {
     if [[ '${var.aws_region_list[0]}' == '${var.aws_region_01}' ]]; then echo "cockroach-sql sql --url "\""postgres://${var.admin_user_name}@${aws_network_interface.haproxy[0].private_ip}:26257/defaultdb?sslmode=verify-full&sslrootcert=/home/ec2-user/certs/ca.crt&sslcert=/home/ec2-user/certs/client.${var.admin_user_name}.crt&sslkey=/home/ec2-user/certs/client.${var.admin_user_name}.key"\"" --file crdb-multi-region-demo/sql/db_configure.sql" >> /home/ec2-user/.bashrc; fi;
     if [[ '${var.aws_region_list[0]}' == '${var.aws_region_01}' ]]; then echo "cockroach-sql sql --url "\""postgres://${var.admin_user_name}@${aws_network_interface.haproxy[0].private_ip}:26257/defaultdb?sslmode=verify-full&sslrootcert=/home/ec2-user/certs/ca.crt&sslcert=/home/ec2-user/certs/client.${var.admin_user_name}.crt&sslkey=/home/ec2-user/certs/client.${var.admin_user_name}.key"\"" --file crdb-multi-region-demo/sql/import.sql" >> /home/ec2-user/.bashrc; fi;
     echo "}" >> /home/ec2-user/.bashrc
-    echo "# For demo usage.  The python code expects these environment variables to be set" > /home/ec2-user/.bashrc
+    echo "# For demo usage.  The python code expects these environment variables to be set" >> /home/ec2-user/.bashrc
     echo "export DB_HOST="\""${aws_network_interface.haproxy[0].private_ip}"\"" " >> /home/ec2-user/.bashrc
     echo "export DB_USER="\""${var.admin_user_name}"\"" " >> /home/ec2-user/.bashrc
     echo "export DB_SSLCERT="\""/home/ec2-user/certs/client.${var.admin_user_name}.crt"\"" " >> /home/ec2-user/.bashrc
