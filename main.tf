@@ -238,6 +238,7 @@ resource "aws_instance" "crdb" {
     echo "Copying the ca.key to .ssh/id_rsa, generating the public key and adding it to authorized keys for passwordless ssh between nodes"
     cp /home/ec2-user/my-safe-directory/ca.key /home/ec2-user/.ssh/id_rsa
     ssh-keygen -y -f /home/ec2-user/.ssh/id_rsa >> /home/ec2-user/.ssh/authorized_keys
+    chown ec2-user:ec2-user /home/ec2-user/.ssh/id_rsa
 
     echo "Creating the CREATENODECERT bashrc function"
     echo "CREATENODECERT() {" >> /home/ec2-user/.bashrc
