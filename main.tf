@@ -406,7 +406,7 @@ resource "aws_instance" "app" {
     echo "}" >> /home/ec2-user/.bashrc   
     echo " " >> /home/ec2-user/.bashrc   
 
-    echo "Installing and Configuring Demo"
+    echo "Installing and Configuring Demo Function"
     echo "MULTIREGION_DEMO_INSTALL() {" >> /home/ec2-user/.bashrc
     echo "pip3 install sqlalchemy~=1.4" >> /home/ec2-user/.bashrc
     echo "pip3 install sqlalchemy-cockroachdb" >> /home/ec2-user/.bashrc
@@ -428,6 +428,6 @@ resource "aws_instance" "app" {
     echo "export DB_SSLKEY="\""/home/ec2-user/certs/client.${var.admin_user_name}.key"\"" " >> /home/ec2-user/.bashrc
     echo "export DB_SSLROOTCERT="\""/home/ec2-user/certs/ca.crt"\"" " >> /home/ec2-user/.bashrc
     echo "export DB_SSLMODE="\""require"\"" " >> /home/ec2-user/.bashrc
-
+    if [[ '${var.include_demo}' == 'yes' ]]; then echo "Installing Demo"; sleep 60; su ec2-user -lc 'MULTIREGION_DEMO_INSTALL'; fi;
   EOF
 }
