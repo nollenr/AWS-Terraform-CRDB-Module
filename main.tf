@@ -275,6 +275,16 @@ resource "aws_instance" "crdb" {
     echo "Creating the node cert, root cert and starting CRDB"
     sleep 20; su ec2-user -lc 'CREATENODECERT; CREATEROOTCERT; STARTCRDB'
 
+    echo "SETCRDBVARS() {" >> /home/ec2-user/.bashrc
+    echo "  cockroach node status | awk -F ':' 'FNR > 1 { print \$1 }' | awk '{ print \$1, \$2 }' |  while read line; do" >> /home/ec2-user/.bashrc
+    echo "    node_number=\`echo \$line | awk '{ print \$1 }'\`" >> /home/ec2-user/.bashrc
+    echo "    variable_name=CRDBNODE\$node_number" >> /home/ec2-user/.bashrc
+    echo "    ip=\`echo \$line | awk '{ print \$2 }'\`" >> /home/ec2-user/.bashrc
+    echo "    echo export \$variable_name=\$ip >> crdb_node_list" >> /home/ec2-user/.bashrc
+    echo "  done" >> /home/ec2-user/.bashrc
+    echo "  source ./crdb_node_list" >> /home/ec2-user/.bashrc
+    echo "}" >> /home/ec2-user/.bashrc
+
     echo "Validating if init needs to be run"
     echo "RunInit: ${var.run_init}  Count.Index: ${count.index}   Count: ${var.crdb_nodes}"
     if [[ '${var.run_init}' = 'yes' && ${count.index + 1} -eq ${var.crdb_nodes} ]]; then echo "Initializing Cockroach Database" && su ec2-user -lc 'cockroach init'; fi
