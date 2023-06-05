@@ -168,7 +168,7 @@
     variable "crdb_version" {
       description = "CockroachDB Version"
       type        = string
-      default     = "22.2.5"
+      default     = "22.2.10"
     }
 
     variable "run_init" {
