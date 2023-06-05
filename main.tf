@@ -42,7 +42,7 @@ locals {
 }
 
 locals {
-  depends_on = [aws_instance.crdb]
+  # depends_on = [aws_instance.crdb]
   ip_list_public     = join(" ", aws_instance.crdb[*].public_ip)
   join_string_public = (var.join_string != "" ? var.join_string : join(",", aws_instance.crdb[*].public_ip))
 }
