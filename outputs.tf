@@ -1,6 +1,11 @@
 output "join_string" {
-  description = "the CockroachDB join string"
+  description = "the CockroachDB private IP join string"
   value = local.join_string
+}
+
+output "join_string_public" {
+  description = "the CockroachDB public IP join string"
+  value = local.join_string_public
 }
 
 output "subnets" {
