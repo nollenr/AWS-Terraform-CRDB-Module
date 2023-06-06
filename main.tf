@@ -270,9 +270,10 @@ resource "aws_instance" "crdb" {
     echo "Creating the STARTCRDB bashrc function"
     echo "STARTCRDB() {" >> /home/ec2-user/.bashrc
     echo "  cockroach start \\" >> /home/ec2-user/.bashrc
-    echo '  --locality=region="$aws_region",zone="$aws_az" \' >> /home/ec2-user/.bashrc
+    echo '  --locality=cloud=aws,region="$aws_region",zone="$aws_az" \' >> /home/ec2-user/.bashrc
     echo "  --certs-dir=certs \\" >> /home/ec2-user/.bashrc
-    echo '  --advertise-addr=$ip_local \' >> /home/ec2-user/.bashrc
+    echo '  --locality-advertise-addr=cloud=aws@$ip_local \' >> /home/ec2-user/.bashrc
+    echo '  --advertise-addr=$ip_public \' >> /home/ec2-user/.bashrc
     echo '  --join=$JOIN_STRING \' >> /home/ec2-user/.bashrc
     echo '  --max-offset=250ms \' >> /home/ec2-user/.bashrc
     echo "  --background " >> /home/ec2-user/.bashrc
