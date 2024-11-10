@@ -19,6 +19,21 @@ AWS Terraform - CockroachDB on EC2
 
 ![Visual Description of the Terraform Script Output](/Resources/cloud_formation_VPC_output.drawio.png)
 
+# To find an instance type using AWS CLI
+Use either `x86_64` or `ARM` instance types
+The hypervisor must be `nitro`
+* List all "t" instance types
+```
+aws ec2 describe-instance-types --filters "Name=hypervisor, Values=nitro" "Name=instance-type, Values=t*"  --query 'InstanceTypes[*].[InstanceType, ProcessorInfo.SupportedArchitectures[0], VCpuInfo.DefaultCores]'
+```
+* List all instance types with at least 4vcpu that have the ARM architecture (valid architectures are [arm64 | i386 | x86_64 ])
+```
+aws ec2 describe-instance-types --filters "Name=hypervisor, Values=nitro" "Name=processor-info.supported-architecture, Values=arm64"  --query 'InstanceTypes[*].[InstanceType, ProcessorInfo.SupportedArchitectures[0], VCpuInfo[?DefaultCores>=`4`], VCpuInfo.DefaultCores ]'
+```
+* List all `t` instance types that support ARM architecture and have exactly 4 vcpu
+```
+aws ec2 describe-instance-types --filters "Name=hypervisor, Values=nitro" "Name=processor-info.supported-architecture, Values=arm64" "Name=instance-type, Values=t*" "Name=vcpu-info.default-vcpus, Values=4" --query 'InstanceTypes[*].[InstanceType, ProcessorInfo.SupportedArchitectures[0], VCpuInfo.DefaultCores ]'
+```
 
 ## Variables
 ### Variables available in terraform.tfvars 
@@ -38,7 +53,6 @@ AWS Terraform - CockroachDB on EC2
 * `create_admin_user` = "yes or no - should an admin user (with cert) be creawted for this datagbase"
 * `admin_user_name` = "Username of the admin user"
 * `project_name`    =  Name of the project.
-* `environment`     =  Name of the environment.
 * `owner`           =  Owner of the infrastructure
 * `vpc_cidr`        =  CIDR block for the VPC
 * `crdb_version`    =  CockroachDB Version  Note:  There is a condition on this field -- only values in the conditional statement will be allowed.

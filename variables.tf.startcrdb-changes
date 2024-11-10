@@ -134,27 +134,7 @@
     variable "crdb_instance_type" {
       description = "The AWS instance type for the crdb instances."
       type        = string
-      default     = "m7g.xlarge"
-    }
-
-    variable "crdb_arm_release" {
-      description = "Do you want to use the ARM version of CRDB?  There are implications on the instances available for the installation.  You must choose the correct instance type or this will fail."
-      type        = string
-      default     = "yes"
-      validation {
-        condition = contains(["yes", "no"], var.crdb_arm_release)
-        error_message = "Valid value for variable 'arm' is : 'yes' or 'no'"        
-      } 
-    }
-
-    variable "crdb_enable_spot_instances" {
-      description = "Do you want to use SPOT instances?  There are implications on the instances available for the installation.  You must choose the correct instance type or this will fail."
-      type        = string
-      default     = "no"
-      validation {
-        condition = contains(["yes", "no"], var.crdb_enable_spot_instances)
-        error_message = "Valid value for variable 'spot instances' is : 'yes' or 'no'"        
-      } 
+      default     = "m6i.large"
     }
 
     variable "crdb_root_volume_type" {
@@ -173,22 +153,6 @@
       default     = 8
     }
 
-    variable "crdb_store_volume_type" {
-      description = "EBS Root Volume Type"
-      type        = string
-      default     = "gp2"
-      validation {
-        condition = contains(["gp2", "gp3"], var.crdb_store_volume_type)
-        error_message = "Valid values for variable crdb_root_volume_type is one of the following: 'gp2', 'gp3'"
-      }
-    }
-
-    variable "crdb_store_volume_size" {
-      description = "EBS Root Volume Size"
-      type        = number
-      default     = 8
-    }
-
     variable "crdb_instance_key_name" {
       description = "The key name to use for the crdb instance -- this key must already exist"
       type        = string
@@ -198,7 +162,7 @@
     variable "crdb_version" {
       description = "CockroachDB Version"
       type        = string
-      default     = "24.2.4"
+      default     = "23.1.10"
     }
 
     variable "run_init" {
