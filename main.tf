@@ -47,6 +47,7 @@ locals {
     project     = var.project_name,
   }
   tags = merge(var.resource_tags, local.required_tags) 
+  admin_username = "ec2-user"
   # create 6 subnets: 3 for public subnets, 3 for private subnets
   subnet_list = cidrsubnets(var.vpc_cidr,3,3,3,3,3,3)
   private_subnet_list = chunklist(local.subnet_list,3)[0]

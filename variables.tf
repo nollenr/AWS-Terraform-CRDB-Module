@@ -56,14 +56,14 @@
     variable "aws_region_01" {
       description = "AWS region"
       type        = string
-      default     = "us-east-1"
+      default     = "us-east-2"
     }
 
     # This is not used except for the mult-region-demo function being added to the bashrc
     variable "aws_region_list" {
       description = "list of the AWS regions for the crdb cluster"
       type = list
-      default = ["us-east-1", "us-west-2", "us-east-2"]
+      default = ["us-east-2", "us-west-2", "us-east-1"]
     }
 
 # ----------------------------------------
