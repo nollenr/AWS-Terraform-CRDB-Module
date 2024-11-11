@@ -1,5 +1,4 @@
 # CRDB Nodes
-# TODO Change COUNT
 resource "aws_instance" "crdb" {
   count         = var.create_ec2_instances == "yes" ? var.crdb_nodes : 0
   user_data_replace_on_change = true
