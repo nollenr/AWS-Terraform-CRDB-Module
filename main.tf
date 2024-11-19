@@ -1,6 +1,6 @@
-provider "aws" {
-  region = var.aws_region_01
-}
+# provider "aws" {
+#   region = var.aws_region_01
+# }
 
 data "aws_availability_zones" "available" {
   state = "available"
