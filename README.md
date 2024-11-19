@@ -78,17 +78,19 @@ The user behind the security credentials will need permissions to create each of
 
 ### Run this Terraform Script
 ```terraform
-git clone https://github.com/nollenr/AWS-Terraform-CRDB.git
-cd AWS-Terraform-CRDB/
-export AWS_ACCESS_KEY_ID={ID}
-export AWS_SECRET_ACCESS_KEY={SECRET}
+git clone https://github.com/nollenr/AWS-Terraform-CRDB-Module.git
+cd AWS-Terraform-CRDB-Module/
 terraform init
-terraform fmt (optinal)
-terraform validate
 terraform plan
 terraform apply
 terraform destroy
 ```
+
+### Destroy all Resources Created
+```terraform
+terraform destroy
+```
+
 
 ## Files in this repo
 * `terraform.tf` Sets the AWS provider and versions
