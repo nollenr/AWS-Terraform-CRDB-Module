@@ -23,6 +23,8 @@ resource "aws_instance" "crdb" {
     encrypted = true
     volume_type = var.crdb_store_volume_type
     volume_size = var.crdb_store_volume_size
+    iops       = var.crdb_store_volume_type == "gp3" ? var.crdb_store_volume_iops : null
+    throughput = var.crdb_store_volume_type == "gp3" ? var.crdb_store_volume_throughput : null
   }
   user_data = <<EOF
 #!/bin/bash -xe

@@ -188,7 +188,17 @@
       type        = number
       default     = 8
     }
+    variable "crdb_store_volume_iops" {
+      description = "IOPS for gp3"
+      type        = number
+      default     = 3000
+    }
 
+    variable "crdb_store_volume_throughput" {
+      description = "Throughput for gp3"
+      type        = number
+      default     = 125
+    }
     variable "crdb_instance_key_name" {
       description = "The key name to use for the crdb instance -- this key must already exist"
       type        = string
