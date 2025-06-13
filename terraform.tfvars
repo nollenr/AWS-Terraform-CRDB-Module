@@ -13,8 +13,8 @@ crdb_instance_type = "t4g.medium"
 crdb_store_volume_type = "gp3"
 crdb_store_volume_size = 8
 # iops and throughput are only used for gp3 volumes
-# ratio of IOPS to volume size is 500
-# ration of throughput to volume size is 25
+# ratio of IOPS to volume size cannot be greater than 500
+# ration of throughput to volume size cannot be greater than 25
 crdb_store_volume_iops = 3000
 crdb_store_volume_throughput = 125
 crdb_version = "24.2.4"

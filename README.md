@@ -14,10 +14,11 @@ AWS Terraform - CockroachDB on EC2
 * Security group for intra-node access
 * Security group for a specific IP (from variable `my_ip_address`) with access for SSH, RDP, HTTP (8080), and Cockroach Database on 26257
 * Database Instances (number of instances is configurable via a variable)
+* Database Storage Volumes, 1 per instance
 * HA Proxy (optional) -- if the HA Proxy is created, it is configured to access the database instances
 * APP Node (optional) -- if the APP node is created, a function is created (CRDB) which will connect to the database via haproxy using client certs
 
-![Visual Description of the Terraform Script Output](/Resources/cloud_formation_VPC_output.drawio.png)
+![Diagram showing AWS Terraform deployment output with VPC, public and private subnets, internet gateway, route tables, security groups, CockroachDB nodes, optional HAProxy and App node. The diagram illustrates network segmentation, resource relationships, and connectivity paths. Text labels identify each component and their connections. The environment is technical and structured, focusing on infrastructure layout and resource organization.](/Resources/cloud_formation_VPC_output.drawio.png)
 
 # To find an instance type using AWS CLI
 Use either `x86_64` or `ARM` instance types
@@ -43,7 +44,11 @@ aws ec2 describe-instance-types --filters "Name=hypervisor, Values=nitro" "Name=
 * `crdb_nodes` = Number of CockroachDB Nodes to create.  The number should be a multiple of 3.  The script will use 3 AZs and place equal number of nodes in each AZ.  
 * `crdb_instance_type` = "The instance type to choose for the CockroachDB nodes.  NOTE:  There is a condition on this variable in variables.tf."
 * `crdb_root_volume_type` = "storage type for the CRDB root volume.  Usual values are 'gp2' or gp3'"
-* `crdb_root_volume_size` = The size in GB for the root volume attached to the CRDB nodes.  
+* `crdb_root_volume_size` = The size in GB for the root volume attached to the CRDB nodes. 
+* `crdb_store_volume_type` = 'gp2' or 'gp3'
+* `crdb_store_volume_size` = size of the store volume (this is where CRDB will store data and logs)
+* `crdb_store_volume_iops` = if using 'gp3' as the storage type, then the IOPS can be set using this variable.  The ratio of size/iops cannot be > 500.
+* `crdb_store_volume_throughput` = if using 'gp3' as the storage type, then the THROUGHPUT can be set using this variable.  The ratio of size/throughput cannot be > 25.
 * `run_init` = "yes or no -- should the 'cockroach init' command be issued after the nodes are created?"
 * `include_ha_proxy` = "yes or no - should an HA Proxy node be created and configured."
 * `haproxy_instance_type` = "The instance type to choose for the HA Proxy node."
@@ -117,7 +122,12 @@ If you created both an HAProxy and App Instance your app instance is configured 
 root@192.168.2.116:26257/defaultdb>
 ```
 
-You can also connect manually from the app instance using the following connection string:
+You can also connect manually from the app instance using the following connection strings:
+```
+cockroach sql
+```
+
+To connect with certs
 ```
 cockroach-sql sql "postgresql://<local-ha-proxy-ip>:26257/defaultdb?sslmode=verify-full&sslrootcert=$HOME/certs/ca.crt&sslcert=certs/client.<admin-user-name>.crt&sslkey=certs/client.<admin-user-name>.key"
 ```
