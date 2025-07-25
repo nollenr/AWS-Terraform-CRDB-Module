@@ -1,6 +1,10 @@
 AWS Terraform - CockroachDB on EC2
 ==================================
 
+# Latest Changes
+* 2025 07 25:  Include WAL Failover (variable `wal_failover="yes"`)
+* 2025 07 25:  Single Instance Cluster (variable `crdb_nodes = 1`)
+
 ## The Terraform script creates the following infrastructure:
 * tls private database keys
 * self-signed cert (ca.crt) for tsl connections to the database

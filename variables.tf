@@ -126,7 +126,7 @@
       type        = number
       default     = 3
       validation {
-        condition = var.crdb_nodes%3 == 0
+        condition = var.crdb_nodes==1 || var.crdb_nodes%3 == 0
         error_message = "The variable 'crdb_nodes' must be a multiple of 3"
       }
     }
@@ -235,6 +235,16 @@
       description = "An admin with this username will be created if 'create_admin_user=yes'"
       type        = string
       default     = ""
+    }
+
+    variable "wal_failover" {
+      description = "'yes' or 'no' enable WAL failover."
+      type        = string
+      default     = "yes"
+      validation {
+        condition = contains(["yes", "no"], var.wal_failover)
+        error_message = "Valid value for variable 'wal_failover' is : 'yes' or 'no'"        
+      }      
     }
 
 # ----------------------------------------
