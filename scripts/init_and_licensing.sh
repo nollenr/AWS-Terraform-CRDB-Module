@@ -1,7 +1,7 @@
 echo "Validating if init needs to be run, creating the admin user, and installing licenses"
 echo "RunInit: ${run_init}  Count.Index: ${index}  Count: ${crdb_nodes}"
 
-if [[ '${run_init}' = 'yes' && $(( ${index} + 1 )) -eq ${crdb_nodes} ]]; then
+if [[ '${run_init}' = 'yes' && $(( ${index} + 1 )) -eq ${crdb_nodes} && ${crdb_nodes} -gt 1 ]]; then
   echo "Initializing Cockroach Database"
   su ec2-user -lc 'cockroach init'
 fi

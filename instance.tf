@@ -17,14 +17,18 @@ resource "aws_instance" "crdb" {
     volume_type = var.crdb_root_volume_type
     volume_size = var.crdb_root_volume_size
   }
-  ebs_block_device {
-    device_name = "/dev/sdf"
-    delete_on_termination = true
-    encrypted = true
-    volume_type = "gp3"
-    volume_size = "25"
-    tags = merge(local.tags, {Name = "crdb-data", Role = "wal"})
+  dynamic ebs_block_device {   #  changing this to count so that the volume is created only if we're adding WAL failover.   # Adding variable to tfvarws
+    for_each = var.crdb_wal_failover == "yes" ? [1] : []
+    content {
+      device_name = "/dev/sdf"
+      delete_on_termination = true
+      encrypted = true
+      volume_type = "gp3"
+      volume_size = "25"
+      tags = merge(local.tags, {Name = "crdb-data", Role = "wal"})
+    }
   }
+
   ebs_block_device {
     device_name = "/dev/sdg"
     delete_on_termination = true
@@ -37,7 +41,8 @@ resource "aws_instance" "crdb" {
   }
   user_data = join("\n", [
     "#!/bin/bash -xe",
-    file("scripts/initialize_disks_by_order.sh"),
+    templatefile("${path.module}/scripts/initialize_disks_by_order.sh", {
+      wal_failover = var.crdb_wal_failover,}),
     templatefile("${path.module}/scripts/setting_required_variables.sh", {
       ip_local=local.interface_map[aws_network_interface.crdb[count.index].id].private_ip, 
       aws_region=local.subnet_map[local.interface_map[aws_network_interface.crdb[count.index].id].subnet_id].region,
@@ -58,14 +63,23 @@ resource "aws_instance" "crdb" {
       availability_zone=local.subnet_map[local.interface_map[aws_network_interface.crdb[count.index].id].subnet_id].availability_zone,
       advertise_address=local.interface_map[aws_network_interface.crdb[count.index].id].private_ip,
       join_string=local.join_string,
-      wal_failover = var.wal_failover,}),    
+      wal_failover = var.crdb_wal_failover,}),    
     templatefile("${path.module}/scripts/wal_failover_diagnostic_logging_config.sh", {
-      wal_failover = var.wal_failover,}),
+      wal_failover = var.crdb_wal_failover,}),
     templatefile("${path.module}/scripts/create_cert_functions.sh", {
       include_ha_proxy    = var.include_ha_proxy,
       ha_proxy_private_ip = aws_network_interface.haproxy[0].private_ip}),
     file("${path.module}/scripts/create_crdb_control_functions.sh"),
     file("${path.module}/scripts/create_certs_and_start_crdb.sh"),
+    templatefile("${path.module}/scripts/init_and_licensing.sh", {
+      run_init    = var.run_init,
+      index = count.index,
+      crdb_nodes = var.crdb_nodes,
+      create_admin_user = var.create_admin_user,
+      admin_user_name = var.admin_user_name,
+      install_enterprise_keys = var.install_enterprise_keys,
+      cluster_organization = var.cluster_organization,
+      enterprise_license = var.enterprise_license,}),
   ])
 }
 

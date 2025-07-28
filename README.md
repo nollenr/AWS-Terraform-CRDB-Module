@@ -1,8 +1,26 @@
 AWS Terraform - CockroachDB on EC2
 ==================================
 
-# Latest Changes
-* 2025 07 25:  Include WAL Failover (variable `wal_failover="yes"`)
+## Table of Contents
+- [Latest Changes](#latest-changes)
+- [Terraform Infrastructure](#the-terraform-script-creates-the-following-infrastructure)
+- [Variables](#variables)
+- [Running the Terraform Script](#running-the-terraform-script)
+- [Connecting to the Cluster](#connecting-to-the-cockroach-cluster-from-the-app-instance)
+
+## Latest Changes
+* 2025 07 25:  Include WAL Failover (variable `crdb_wal_failover="yes"`)
+
+  NOTE:  the `--log-config-file=logs.yaml` suggested by the documentation for [`wal-failover`](https://www.cockroachlabs.com/docs/stable/wal-failover#3-log-configuration-for-wal-failover) has not been implemented.   In `25.2.2`, the following errors were received, stopping the cluster from starting:
+
+  - E250728 20:52:45.711903 1 1@cli/clierror/check.go:35  [-] 1  ERROR: file group "sql-auth": File-based audit logging cannot coexist with buffering configuration. Disable either the buffering configuration ("buffering") or auditable log ("auditable") configuration.
+  - E250728 20:52:45.711903 1 1@cli/clierror/check.go:35  [-] 1 +file group "sql-audit": File-based audit logging cannot coexist with buffering configuration. Disable either the buffering configuration ("buffering") or auditable log ("auditable") configuration.
+  - E250728 20:52:45.711903 1 1@cli/clierror/check.go:35  [-] 1 +fie-based audit logging cannot coexist with buffering configuration. Disable either the buffering configuration ("buffering") or auditable log ("auditable") configuration.
+  - ERROR: file group "sql-auth": File-based audit logging cannot coexist with buffering configuration. Disable either the buffering configuration ("buffering") or auditable log ("auditable") configuration.
+  - file group "sql-audit": File-based audit logging cannot coexist with buffering configuration. Disable either the buffering configuration ("buffering") or auditable log ("auditable") configuration.
+  - file group "security": File-based audit logging cannot coexist with buffering configuration. Disable either the buffering configuration ("buffering") or auditable log ("auditable") configuration.
+
+
 * 2025 07 25:  Single Instance Cluster (variable `crdb_nodes = 1`)
 
 ## The Terraform script creates the following infrastructure:
@@ -19,6 +37,7 @@ AWS Terraform - CockroachDB on EC2
 * Security group for a specific IP (from variable `my_ip_address`) with access for SSH, RDP, HTTP (8080), and Cockroach Database on 26257
 * Database Instances (number of instances is configurable via a variable)
 * Database Storage Volumes, 1 per instance
+* WAL Failover Disk 25GiB (optional) 
 * HA Proxy (optional) -- if the HA Proxy is created, it is configured to access the database instances
 * APP Node (optional) -- if the APP node is created, a function is created (CRDB) which will connect to the database via haproxy using client certs
 
@@ -59,7 +78,7 @@ aws ec2 describe-instance-types --filters "Name=hypervisor, Values=nitro" "Name=
 * `include_app` = "yes or no - should an app node be included?"
 * `app_instance_type` = "The instance type to choose for the APP Node"
 * `crdb_instance_key_name` = "The name of the AWS Key to use for all instances created by this Terraform Script.  This must be an existing Key for the region selected."
-* `create_admin_user` = "yes or no - should an admin user (with cert) be creawted for this datagbase"
+* `create_admin_user` = "yes or no - should an admin user (with cert) be created for this database"
 * `admin_user_name` = "Username of the admin user"
 * `project_name`    =  Name of the project.
 * `owner`           =  Owner of the infrastructure
@@ -142,6 +161,6 @@ For example, if your HAProxy local IP address is:
 And your admin-user-name (from terraform.tfvars) is: ```ron```
 
 Then, your connect string would be:
-```
+```bash
 cockroach-sql sql "postgresql://192.168.2.116:26257/defaultdb?sslmode=verify-full&sslrootcert=$HOME/certs/ca.crt&sslcert=certs/client.ron.crt&sslkey=certs/client.ron.key"
 ```

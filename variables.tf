@@ -211,13 +211,24 @@
       default     = "24.2.4"
     }
 
+    variable "crdb_wal_failover" {
+      description = "'yes' or 'no' enable WAL failover."
+      type        = string
+      default     = "yes"
+      validation {
+        condition = contains(["yes", "no"], var.crdb_wal_failover)
+        error_message = "Valid value for variable 'crdb_wal_failover' is : 'yes' or 'no'"        
+      }      
+    }
+
+    #  For single node clusters, leave this set to 'yes'!  
     variable "run_init" {
       description = "'yes' or 'no' to include an HAProxy Instance"
       type        = string
       default     = "yes"
       validation {
         condition = contains(["yes", "no"], var.run_init)
-        error_message = "Valid value for variable 'include_ha_proxy' is : 'yes' or 'no'"        
+        error_message = "Valid value for variable 'run_init' is : 'yes' or 'no'.  For single node clusters, please leave this 'yes' even though init is not required on those clusters!"        
       }
     }
 
@@ -235,16 +246,6 @@
       description = "An admin with this username will be created if 'create_admin_user=yes'"
       type        = string
       default     = ""
-    }
-
-    variable "wal_failover" {
-      description = "'yes' or 'no' enable WAL failover."
-      type        = string
-      default     = "yes"
-      validation {
-        condition = contains(["yes", "no"], var.wal_failover)
-        error_message = "Valid value for variable 'wal_failover' is : 'yes' or 'no'"        
-      }      
     }
 
 # ----------------------------------------

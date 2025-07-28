@@ -1,11 +1,20 @@
 # Define mount points in order matching device attachment
-MOUNT_POINTS=("/mnt/crdb-wal" "/mnt/crdb-data")
+# Build mount point list based on WAL failover
+echo "Initializing disk(s)..."
+
+# Set mount points based on WAL failover setting
+if [[ "${wal_failover}" == "yes" ]]; then
+  MOUNT_POINTS=("/mnt/crdb-wal" "/mnt/crdb-data")
+else
+  MOUNT_POINTS=("/mnt/crdb-data")
+fi
+
 
 # Start with device index 1 (/dev/nvme1n1, /dev/nvme2n1, etc.)
 DEVICE_INDEX=1
 
-for MOUNT_POINT in "${MOUNT_POINTS[@]}"; do
-  DEVICE="/dev/nvme${DEVICE_INDEX}n1"
+for MOUNT_POINT in "$${MOUNT_POINTS[@]}"; do
+  DEVICE="/dev/nvme$${DEVICE_INDEX}n1"
 
   echo "Formatting $DEVICE with XFS..."
   mkfs.xfs "$DEVICE"
@@ -23,7 +32,7 @@ for MOUNT_POINT in "${MOUNT_POINTS[@]}"; do
   echo "Adding $DEVICE to /etc/fstab"
   echo "UUID=$UUID $MOUNT_POINT xfs defaults,nofail 0 2" >> /etc/fstab
 
-  echo "✅ Mounted $DEVICE to $MOUNT_POINT"
+  echo "Mounted $DEVICE to $MOUNT_POINT"
 
   ((DEVICE_INDEX++))
 done
