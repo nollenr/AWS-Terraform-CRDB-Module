@@ -4,7 +4,9 @@ cat <<'EOF' >> /home/ec2-user/.bashrc
 CREATENODECERT() {
   cockroach cert create-node \
     $ip_local \
+    $dns_private \
     $ip_public \
+    $dns_public \
     localhost \
     127.0.0.1 \
 EOF
