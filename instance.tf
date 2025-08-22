@@ -79,7 +79,10 @@ resource "aws_instance" "crdb" {
       admin_user_name = var.admin_user_name,
       install_enterprise_keys = var.install_enterprise_keys,
       cluster_organization = var.cluster_organization,
-      enterprise_license = var.enterprise_license,}),
+      enterprise_license = var.enterprise_license,
+      create_db_ui_user = var.create_db_ui_user,
+      db_ui_user_name = var.db_ui_user_name,
+      db_ui_user_password = var.db_ui_user_password,}),
   ])
 }
 

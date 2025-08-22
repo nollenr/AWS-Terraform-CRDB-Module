@@ -232,13 +232,14 @@
       }
     }
 
+    # This user can must use certs for login
     variable "create_admin_user" {
       description = "'yes' or 'no' to create an admin user in the database.  This might only makes sense when adding an app instance since the certs will be created and configured automatically for connection to the database."
       type        = string
       default     = "yes"
       validation {
         condition = contains(["yes", "no"], var.create_admin_user)
-        error_message = "Valid value for variable 'include_ha_proxy' is : 'yes' or 'no'"        
+        error_message = "Valid value for variable 'create_admin_user' is : 'yes' or 'no'"        
       }      
     }
 
@@ -247,6 +248,29 @@
       type        = string
       default     = ""
     }
+
+    variable "create_db_ui_user" {
+      description = "'yes' or 'no' to create a user with a password for accessing the database UI."
+      type        = string
+      default     = "yes"
+      validation {
+        condition = contains(["yes", "no"], var.create_db_ui_user)
+        error_message = "Valid value for variable 'create_db_ui_user' is : 'yes' or 'no'"        
+      }      
+    }
+
+    variable "db_ui_user_name"{
+      description = "An admin with this username will be created if 'create_db_ui_user=yes'"
+      type        = string
+      default     = ""
+    }    
+
+    variable "db_ui_user_password"{
+      description = "An admin with this password will be created if 'create_db_ui_user=yes'"
+      type        = string
+      default     = ""
+    }    
+
 
 # ----------------------------------------
 # HA Proxy Instance Specifications
@@ -271,7 +295,7 @@
 # APP Instance Specifications
 # ----------------------------------------
     variable "include_app" {
-      description = "'yes' or 'no' to include an HAProxy Instance"
+      description = "'yes' or 'no' to include an App Instance"
       type        = string
       default     = "yes"
       validation {

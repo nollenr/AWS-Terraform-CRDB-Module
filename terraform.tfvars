@@ -8,7 +8,7 @@ vpc_cidr = "192.168.7.0/24"
 # -----------------------------------------
 # CRDB Specifications
 # -----------------------------------------
-crdb_nodes = 3
+crdb_nodes = 1
 crdb_instance_type = "t4g.medium"
 crdb_store_volume_type = "gp3"
 crdb_store_volume_size = 8
@@ -21,6 +21,9 @@ crdb_version = "25.2.2"
 crdb_arm_release = "yes"
 crdb_enable_spot_instances = "no"
 crdb_wal_failover = "yes"
+create_db_ui_user = "yes"
+db_ui_user_name = "bob"
+db_ui_user_password = "bob123321bob"
 
 # HA Proxy
 include_ha_proxy = "no"

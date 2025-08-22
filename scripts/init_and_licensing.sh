@@ -11,6 +11,11 @@ if [[ '${run_init}' = 'yes' && $(( ${index} + 1 )) -eq ${crdb_nodes} && '${creat
   su ec2-user -lc 'cockroach sql --execute "CREATE USER ${admin_user_name}; GRANT admin TO ${admin_user_name};"'
 fi
 
+if [[ '${run_init}' = 'yes' && $(( ${index} + 1 )) -eq ${crdb_nodes} && '${create_db_ui_user}' = 'yes' ]]; then
+  echo "Creating database UI user: ${db_ui_user_name}"
+  su ec2-user -lc 'cockroach sql --execute "CREATE USER ${db_ui_user_name} WITH PASSWORD '\''${db_ui_user_password}'\''; GRANT admin TO ${db_ui_user_name};"'
+fi
+
 if [[ '${run_init}' = 'yes' && $(( ${index} + 1 )) -eq ${crdb_nodes} && '${install_enterprise_keys}' = 'yes' ]]; then
   echo "Installing enterprise license settings for organization: ${cluster_organization}"
   su ec2-user -lc 'cockroach sql --execute "SET CLUSTER SETTING cluster.organization = '\''${cluster_organization}'\'';"'
