@@ -21,7 +21,7 @@ crdb_version = "25.2.2"
 crdb_arm_release = "yes"
 crdb_enable_spot_instances = "no"
 crdb_wal_failover = "yes"
-create_db_ui_user = "yes"
+create_db_ui_user = "no"  # <------------ setting this to yes, requires you to set an environment variable.  See the NOTE below.
 db_ui_user_name = "bob"
 # **********************************************************
 # NOTE:  If you want to have a DB UI user created, define
