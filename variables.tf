@@ -265,6 +265,8 @@
       default     = ""
     }    
 
+  # Be sure to do the following in your environment if you plan on installing the license keys
+  #   export TF_VAR_db_ui_user_password='your password'
     variable "db_ui_user_password"{
       description = "An admin with this password will be created if 'create_db_ui_user=yes'"
       type        = string

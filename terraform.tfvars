@@ -23,7 +23,13 @@ crdb_enable_spot_instances = "no"
 crdb_wal_failover = "yes"
 create_db_ui_user = "yes"
 db_ui_user_name = "bob"
-db_ui_user_password = "bob123321bob"
+# **********************************************************
+# NOTE:  If you want to have a DB UI user created, define
+#        the shell varaible "TF_VAR_db_ui_user_password"
+#        prior to running this script!    The value will
+#        automatically be picked up by this HCL and applied
+# **********************************************************
+# db_ui_user_password = ""
 
 # HA Proxy
 include_ha_proxy = "no"
