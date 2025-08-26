@@ -273,6 +273,18 @@
       default     = ""
     }    
 
+    variable "cache"{
+      description = "The total size for caches, shared evenly if there are multiple storage devices.  Provide a decimal value only.  This is provided as part of the 'cockroach start'.  Example: 0.25"
+      type        = number
+      default     = 0.25
+    }   
+
+    variable "max_sql_memory"{
+      description = "The maximum in-memory storage capacity available to store temporary data for SQL queries.  Provide a decimal value only.  This is provided as part of the 'cockroach start'.  Example: 0.25"
+      type        = number
+      default     = 0.25
+    }   
+
 
 # ----------------------------------------
 # HA Proxy Instance Specifications

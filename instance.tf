@@ -63,7 +63,9 @@ resource "aws_instance" "crdb" {
       availability_zone=local.subnet_map[local.interface_map[aws_network_interface.crdb[count.index].id].subnet_id].availability_zone,
       advertise_address=local.interface_map[aws_network_interface.crdb[count.index].id].private_ip,
       join_string=local.join_string,
-      wal_failover = var.crdb_wal_failover,}),    
+      wal_failover = var.crdb_wal_failover,
+      cache = var.cache,
+      max_sql_memory = var.max_sql_memory,}),    
     templatefile("${path.module}/scripts/wal_failover_diagnostic_logging_config.sh", {
       wal_failover = var.crdb_wal_failover,}),
     templatefile("${path.module}/scripts/create_cert_functions.sh", {

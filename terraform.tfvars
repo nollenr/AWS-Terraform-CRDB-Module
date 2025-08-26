@@ -8,7 +8,7 @@ vpc_cidr = "192.168.7.0/24"
 # -----------------------------------------
 # CRDB Specifications
 # -----------------------------------------
-crdb_nodes = 1
+crdb_nodes = 3
 crdb_instance_type = "t4g.medium"
 crdb_store_volume_type = "gp3"
 crdb_store_volume_size = 8
@@ -30,6 +30,8 @@ db_ui_user_name = "bob"
 #        automatically be picked up by this HCL and applied
 # **********************************************************
 # db_ui_user_password = ""
+cache = 0.35             # Must be a decimal value.
+max_sql_memory = 0.35    # Must be a decimal value.
 
 # HA Proxy
 include_ha_proxy = "no"
