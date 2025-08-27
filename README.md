@@ -9,6 +9,10 @@ AWS Terraform - CockroachDB on EC2
 - [Connecting to the Cluster](#connecting-to-the-cockroach-cluster-from-the-app-instance)
 
 ## Latest Changes
+* 2025 08 27:  Add unencrypted PKCS#8 DER-encoded version of the client private key
+  
+  As part of the Terraform provisioning process, an unencrypted PKCS#8 DER-encoded version of the client private key is automatically generated and stored in the `certs` directory on the **app server**.  This file is created using openssl pkcs8 and is provided for compatibility with tools (such as the PostgreSQL JDBC driver) that require private keys in this specific format.  You do not need to use this file unless your client application (e.g., Java-based tools using JDBC) explicitly requires a PKCS#8 DER-encoded key.   The key follows the following naming convention `client.<admin_user_name>.key.pk8`
+
 * 2025 07 25:  Include WAL Failover (variable `crdb_wal_failover="yes"`)
 
   NOTE:  the `--log-config-file=logs.yaml` suggested by the documentation for [`wal-failover`](https://www.cockroachlabs.com/docs/stable/wal-failover#3-log-configuration-for-wal-failover) has not been implemented.   In `25.2.2`, the following errors were received, stopping the cluster from starting:

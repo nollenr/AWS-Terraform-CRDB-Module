@@ -37,6 +37,11 @@ chmod 600 /home/${local.admin_username}/certs/client.${var.admin_user_name}.crt
 echo '${local.tls_user_key}' >> /home/${local.admin_username}/certs/client.${var.admin_user_name}.key
 chown ${local.admin_username}:${local.admin_username} /home/${local.admin_username}/certs/client.${var.admin_user_name}.key
 chmod 600 /home/${local.admin_username}/certs/client.${var.admin_user_name}.key
+# The PG JDBC driver expects the client key file to be in DER-encoded PKCS#8.
+# Convert a private client key to an unencrypted PKCS#8 format:
+openssl pkcs8 -topk8 -inform PEM -outform DER -in /home/${local.admin_username}/certs/client.${var.admin_user_name}.key -out /home/${local.admin_username}/certs/client.${var.admin_user_name}.key.pk8 -nocrypt
+chown ${local.admin_username}:${local.admin_username} /home/${local.admin_username}/certs/client.${var.admin_user_name}.key.pk8
+
 
 echo "Downloading and installing CockroachDB along with the Geo binaries"
 curl https://binaries.cockroachdb.com/cockroach-sql-v${var.crdb_version}.linux-amd64.tgz | tar -xz && cp -i cockroach-sql-v${var.crdb_version}.linux-amd64/cockroach-sql /usr/local/bin/
