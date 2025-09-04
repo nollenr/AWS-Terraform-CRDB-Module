@@ -40,6 +40,8 @@ haproxy_instance_type = "t3a.micro"
 # APP Node
 include_app = "yes"
 app_instance_type = "t3a.micro"
+include_demo = "no"
+install_haproxy_on_app = "no"
 
 create_admin_user = "yes"
 admin_user_name = "ron"

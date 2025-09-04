@@ -324,6 +324,17 @@
       default     = "t3a.micro"
     }
 
+    variable "install_haproxy_on_app" {
+      description = "'yes' or 'no' to include an HAProxy on the App Node"
+      type        = string
+      default     = "no"
+      validation {
+        condition = contains(["yes", "no"], var.install_haproxy_on_app)
+        error_message = "Valid value for variable 'install_haproxy_on_app' is : 'yes' or 'no'"        
+      }
+    }
+
+
 # ----------------------------------------
 # Demo
 # ----------------------------------------
