@@ -20,6 +20,9 @@ resource "aws_instance" "haproxy" {
   user_data = join("\n", [
     "#!/bin/bash -xe",
     templatefile("${path.module}/scripts/ha_proxy_setup.sh", {
-      ip_list = local.ip_list,}),
+      ip_list = local.ip_list,
+      include_ha_proxy = var.include_ha_proxy,
+      install_haproxy_on_app = var.install_haproxy_on_app,
+      }),
 ])
 }

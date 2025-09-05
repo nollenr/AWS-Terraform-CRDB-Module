@@ -33,7 +33,7 @@ user_data = join("\n", [
   templatefile("${path.module}/scripts/03_crdb_fn.sh", {
     admin_user       = local.admin_username
     admin_user_name  = var.admin_user_name
-    haproxy_ip       = aws_network_interface.haproxy[0].private_ip
+    db_host          = var.install_haproxy_on_app == "yes" ? "localhost" : aws_network_interface.haproxy[0].private_ip
   }),
   # 4) Install pgworkload (adds DBWORKLOAD_INSTALL() to admin's .bashrc)
   templatefile("${path.module}/scripts/04_install_pgworkload.sh", {
@@ -50,5 +50,10 @@ user_data = join("\n", [
     region_01        = var.aws_region_01
     include_demo     = var.include_demo  # "yes" or "no"
   }),
+  templatefile("${path.module}/scripts/ha_proxy_setup.sh", {
+    ip_list = local.ip_list,
+    include_ha_proxy = var.include_ha_proxy,
+    install_haproxy_on_app = var.install_haproxy_on_app,
+    }),
 ])
 }

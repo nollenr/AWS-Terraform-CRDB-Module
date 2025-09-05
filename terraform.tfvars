@@ -41,7 +41,7 @@ haproxy_instance_type = "t3a.micro"
 include_app = "yes"
 app_instance_type = "t3a.micro"
 include_demo = "no"
-install_haproxy_on_app = "no"
+install_haproxy_on_app = "no"  # installing HAProxy on the app node will set the IP in CRDB as localhost
 
 create_admin_user = "yes"
 admin_user_name = "ron"
