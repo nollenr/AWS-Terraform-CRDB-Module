@@ -9,6 +9,7 @@ AWS Terraform - CockroachDB on EC2
 - [Connecting to the Cluster](#connecting-to-the-cockroach-cluster-from-the-app-instance)
 
 ## Latest Changes
+* 2025 09 08:  Install and configure HAProxy on the App Node rather than on a dedicated HAProxy node.   By setting the variable `install_haproxy_on_app` to yes, HAProxy will be downloaded and installed on the App Node.  The CRDB function on the App Node will be configured to connect through the HAProxy running on the App Node.    
 * 2025 08 27:  Add unencrypted PKCS#8 DER-encoded version of the client private key
   
   As part of the Terraform provisioning process, an unencrypted PKCS#8 DER-encoded version of the client private key is automatically generated and stored in the `certs` directory on the **app server**.  This file is created using openssl pkcs8 and is provided for compatibility with tools (such as the PostgreSQL JDBC driver) that require private keys in this specific format.  You do not need to use this file unless your client application (e.g., Java-based tools using JDBC) explicitly requires a PKCS#8 DER-encoded key.   The key follows the following naming convention `client.<admin_user_name>.key.pk8`
@@ -88,6 +89,9 @@ aws ec2 describe-instance-types --filters "Name=hypervisor, Values=nitro" "Name=
 * `owner`           =  Owner of the infrastructure
 * `vpc_cidr`        =  CIDR block for the VPC
 * `crdb_version`    =  CockroachDB Version  Note:  There is a condition on this field -- only values in the conditional statement will be allowed.
+* `create_db_ui_user` = Control if a Database UI User should be created in the database.  Create a shell varaible "TF_VAR_db_ui_user_password" prior to running the script!
+* `db_ui_user_name` = Name of the Database UI user.
+* `install_haproxy_on_app` = Will install and configure HAProxy directly on the App Node.  The CRDB function will connect via HAProxy on the App Node.
 
 **NOTE** :  the `crdb_instance_type`, `aws_region` and `crdb_version` are constrained in the `variables.tf` file.  If you're trying to run this script and running into problems, check the that values you are trying to use are allowed in the `variables.tf`.
 
