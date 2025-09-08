@@ -132,8 +132,14 @@ terraform destroy
 * `terraform.tf` Sets the AWS provider and versions
 * `variables.tf` Creates the variables, definitions and defaults
 * `terraform.tfvars` Easy access to variable values (without having to change the default value in `variables.tf`)
-* `main.tf` Defines and creates the AWS resources
+* `main.tf` Defines Data, Locals and Variables (White List)
 * `outputs.tf` Defines the outputs from the script.  These are variables which are referencable in `terraform console`
+* `haproxy.tf` Defines the HCL for HAProxy Node
+* `instance.tf` Defines the database instances
+* `app.tf` Defines the app node
+* `tls.tf` Accepts or creates keys and certs
+* `network.tf` Create VPC, IGW, subnets (public and private),  route tables (public and private) and routes.
+
 
 # Connecting to the Cockroach Cluster from the "App" Instance
 ## CRDB Function
