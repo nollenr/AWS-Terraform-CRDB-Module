@@ -23,8 +23,8 @@ if [[ ( ${include_ha_proxy} == "yes" || ${install_haproxy_on_app} == "yes" ) ]];
       # timeout client and server govern the maximum amount of time of TCP inactivity.
       # These should be larger than the time to execute the longest query,
       # but not so large that failed connections linger forever.
-      timeout client      10m
-      timeout server      10m
+      # timeout client      10m
+      # timeout server      10m
 
       # TCP keep-alive on client side. Server already enables them.
       option              clitcpka
