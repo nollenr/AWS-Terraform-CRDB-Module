@@ -17,8 +17,8 @@ if [[ ( ${include_ha_proxy} == "yes" || ${install_haproxy_on_app} == "yes" ) ]];
       # if the backend server is not responding, haproxy will make a total
       # of 3 connection attempts waiting 5s each time before giving up on the server,
       # for a total of 15 seconds.
-      retries             2
-      timeout connect     5s
+      retries             3
+      timeout connect     2s
 
       # timeout client and server govern the maximum amount of time of TCP inactivity.
       # These should be larger than the time to execute the longest query,
