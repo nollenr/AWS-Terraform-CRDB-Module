@@ -285,6 +285,14 @@
       default     = 0.25
     }   
 
+    variable "systemd_restart_option"{
+      description = "The systemd restart option for the CRDB service file"
+      validation {
+        condition = contains(["no", "always", "on-success", "on-failure", "on-abnormal", "on-abort", "on-watchdog", ], var.systemd_restart_option)
+        error_message = "Valid value for variable 'systemd_restart_option' is : 'no','always','on-success','on-failure','on-abnormal','on-abort' or'on-watchdog'"        
+      }
+      default = "on-failure"
+    }
 
 # ----------------------------------------
 # HA Proxy Instance Specifications

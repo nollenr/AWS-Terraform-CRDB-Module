@@ -32,6 +32,7 @@ db_ui_user_name = "bob"
 # db_ui_user_password = ""
 cache = 0.35             # Must be a decimal value.
 max_sql_memory = 0.35    # Must be a decimal value.
+systemd_restart_option = "no"
 
 # HA Proxy
 include_ha_proxy = "yes"

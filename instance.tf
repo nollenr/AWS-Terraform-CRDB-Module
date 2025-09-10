@@ -65,7 +65,8 @@ resource "aws_instance" "crdb" {
       join_string=local.join_string,
       wal_failover = var.crdb_wal_failover,
       cache = var.cache,
-      max_sql_memory = var.max_sql_memory,}),    
+      max_sql_memory = var.max_sql_memory,
+      systemd_restart_option = var.systemd_restart_option,}),    
     templatefile("${path.module}/scripts/wal_failover_diagnostic_logging_config.sh", {
       wal_failover = var.crdb_wal_failover,}),
     templatefile("${path.module}/scripts/create_cert_functions.sh", {

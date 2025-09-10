@@ -25,7 +25,7 @@ fi
 
 cat <<EOF >> /etc/systemd/system/securecockroachdb.service
 TimeoutStopSec=300
-Restart=on-failure
+Restart=${systemd_restart_option}
 RestartSec=10
 StandardOutput=syslog
 StandardError=syslog
