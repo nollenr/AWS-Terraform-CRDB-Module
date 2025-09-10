@@ -72,7 +72,8 @@ resource "aws_instance" "crdb" {
     templatefile("${path.module}/scripts/create_cert_functions.sh", {
       include_ha_proxy    = var.include_ha_proxy,
       ha_proxy_private_ip = aws_network_interface.haproxy[0].private_ip}),
-    file("${path.module}/scripts/create_crdb_control_functions.sh"),
+    templatefile("${path.module}/scripts/create_crdb_control_functions.sh", {
+      az_to_private_ips = local.az_to_private_ips,}),
     file("${path.module}/scripts/create_certs_and_start_crdb.sh"),
     templatefile("${path.module}/scripts/init_and_licensing.sh", {
       run_init    = var.run_init,

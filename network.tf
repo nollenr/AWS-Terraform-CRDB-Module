@@ -153,3 +153,35 @@ resource "aws_network_interface" "haproxy" {
   # when creating network interfaces, the security group must go here, not in the instance config
   security_groups = [module.security-group-02.security_group_id, module.security-group-01.security_group_id]
 }
+
+
+locals {
+  subnet_az_map = {
+    for s in aws_subnet.public_subnets :
+    s.id => s.availability_zone
+  }
+}
+# This Terraform locals block is creating a map (dictionary) that associates each subnet ID with its corresponding availability zone (AZ).   subnet_az_map might look like:
+# {
+#   "subnet-abc123" = "us-east-1a"
+#   "subnet-def456" = "us-east-1b"
+#   "subnet-ghi789" = "us-east-1c"
+# }
+
+
+locals {
+  az_to_private_ips = {
+    for az in distinct(values(local.subnet_az_map)) :
+    az => [
+      for ni in aws_network_interface.crdb :
+      ni.private_ip
+      if local.subnet_az_map[ni.subnet_id] == az
+    ]
+  }
+}
+# Above produces a map (dictionary) like:
+# {
+#   "us-east-1a": ["10.0.1.10", "10.0.1.13", "10.0.1.16"],
+#   "us-east-1b": ["10.0.2.11", "10.0.2.14", "10.0.2.17"],
+#   "us-east-1c": ["10.0.3.12", "10.0.3.15", "10.0.3.18"]
+# }

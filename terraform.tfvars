@@ -17,7 +17,7 @@ crdb_store_volume_size = 8
 # ration of throughput to volume size cannot be greater than 25
 # crdb_store_volume_iops = 3000
 # crdb_store_volume_throughput = 125
-crdb_version = "25.2.2"
+crdb_version = "25.2.5"
 crdb_arm_release = "yes"
 crdb_enable_spot_instances = "no"
 crdb_wal_failover = "yes"
@@ -35,14 +35,14 @@ max_sql_memory = 0.35    # Must be a decimal value.
 systemd_restart_option = "no"
 
 # HA Proxy
-include_ha_proxy = "yes"
+include_ha_proxy = "no"
 haproxy_instance_type = "t3a.micro"
 
 # APP Node
 include_app = "yes"
 app_instance_type = "t3a.micro"
 include_demo = "no"
-install_haproxy_on_app = "no"  # installing HAProxy on the app node will set the IP in CRDB as localhost
+install_haproxy_on_app = "yes"  # installing HAProxy on the app node will set the IP in CRDB as localhost
 
 create_admin_user = "yes"
 admin_user_name = "ron"
