@@ -187,12 +187,16 @@ locals {
 # }
 
 locals {
-  az_to_public_ips = {
+  crdb_public_ips_by_az = {
+    # 1. Iterate over the distinct Availability Zones (AZs)
     for az in distinct(values(local.subnet_az_map)) :
     az => [
-      for ni in aws_network_interface.crdb :
-      ni.public_ip
-      if local.subnet_az_map[ni.subnet_id] == az
+      # 2. Iterate over the aws_instance resources (the list of CRDB nodes)
+      for instance in aws_instance.crdb :
+      instance.public_ip
+      # 3. Check if the instance's network interface belongs to the current AZ
+      #    (You need the index to look up the ENI/Subnet details)
+      if local.subnet_map[aws_network_interface.crdb[instance.count.index].subnet_id].availability_zone == az
     ]
   }
 }

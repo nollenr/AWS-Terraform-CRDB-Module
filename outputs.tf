@@ -109,6 +109,6 @@ output "app_node_public_ip" {
 
 output "public_ips_by_az" {
   description = "CockroachDB Node public IPs assigned to interfaces by AZ."
-  value       = local.az_to_public_ips
+  value       = crdb_public_ips_by_az
 }
 
