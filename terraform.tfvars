@@ -41,7 +41,7 @@ haproxy_instance_type = "t3a.micro"
 # APP Node
 include_app = "yes"
 app_instance_type = "t3a.micro"
-include_demo = "no"
+include_demo = "no"             # setting this to yes in a single-region cluster is not really valid.  software will be installed, but database schema will not be created (creating will fail)
 install_haproxy_on_app = "yes"  # installing HAProxy on the app node will set the IP in CRDB as localhost
 
 create_admin_user = "yes"

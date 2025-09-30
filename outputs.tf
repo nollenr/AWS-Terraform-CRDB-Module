@@ -91,10 +91,10 @@
 #   value = module.security-group-01.security_group_id
 # }
 
-output "haproxy_ip" {
-  description = "HA Proxy Private IP"
-  value       = aws_network_interface.haproxy[0].private_ip
-}
+# output "haproxy_ip" {
+#   description = "HA Proxy Private IP"
+#   value       = aws_network_interface.haproxy[0].private_ip
+# }
 
 output "app_node_public_ip" {
   description = "The public IP address of the app node, if created."
