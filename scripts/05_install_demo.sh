@@ -26,7 +26,7 @@ SQL
 
   # Run configure/import only on the designated primary region host
   if [[ "${primary_region}" == "${region_01}" ]]; then
-    URL="postgresql://${admin_user_name}@${haproxy_ip}:26257/defaultdb?sslmode=verify-full&sslrootcert=/home/${admin_user}/certs/ca.crt&sslcert=/home/${admin_user}/certs/client.${admin_user_name}.crt&sslkey=/home/${admin_user}/certs/client.${admin_user_name}.key"
+    URL="postgresql://${admin_user_name}@${db_host}:26257/defaultdb?sslmode=verify-full&sslrootcert=/home/${admin_user}/certs/ca.crt&sslcert=/home/${admin_user}/certs/client.${admin_user_name}.crt&sslkey=/home/${admin_user}/certs/client.${admin_user_name}.key"
     cockroach-sql sql --url "$URL" --file "$HOME/crdb-multi-region-demo/sql/db_configure.sql"
     cockroach-sql sql --url "$URL" --file "$HOME/crdb-multi-region-demo/sql/import.sql"
   fi
@@ -36,7 +36,7 @@ BASHRC
 # Demo environment variables for the app
 {
   echo "# Demo application environment"
-  echo "export DB_HOST=\"${haproxy_ip}\""
+  echo "export DB_HOST=\"${db_host}\""
   echo "export DB_USER=\"${admin_user_name}\""
   echo "export DB_SSLCERT=\"/home/${admin_user}/certs/client.${admin_user_name}.crt\""
   echo "export DB_SSLKEY=\"/home/${admin_user}/certs/client.${admin_user_name}.key\""

@@ -55,6 +55,7 @@ user_data = join("\n", [
     tertiary_region  = var.aws_region_list[2]
     region_01        = var.aws_region_01
     include_demo     = var.include_demo  # "yes" or "no"
+    db_host          = var.install_haproxy_on_app == "yes" ? "localhost" : aws_network_interface.haproxy[0].private_ip
   }),
 ])
 }
