@@ -349,7 +349,7 @@
     variable "include_demo" {
       description = "'yes' or 'no' to include an HAProxy Instance"
       type        = string
-      default     = "yes"
+      default     = "no"
       validation {
         condition = contains(["yes", "no"], var.include_demo)
         error_message = "Valid value for variable 'include_demo' is : 'yes' or 'no'"        
