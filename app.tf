@@ -44,6 +44,7 @@ user_data = join("\n", [
     ip_list = local.ip_list,
     include_ha_proxy = var.include_ha_proxy,
     install_haproxy_on_app = var.install_haproxy_on_app,
+    is_app_node = "yes",
   }),
   # 5) Install multi-region demo (adds MULTIREGION_DEMO_INSTALL() to admin's .bashrc)
   templatefile("${path.module}/scripts/05_install_demo.sh", {

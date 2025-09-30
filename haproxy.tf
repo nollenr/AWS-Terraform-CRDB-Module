@@ -23,6 +23,7 @@ resource "aws_instance" "haproxy" {
       ip_list = local.ip_list,
       include_ha_proxy = var.include_ha_proxy,
       install_haproxy_on_app = var.install_haproxy_on_app,
+      is_app_node = "no",
       }),
 ])
 }

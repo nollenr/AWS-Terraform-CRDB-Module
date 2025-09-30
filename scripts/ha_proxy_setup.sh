@@ -1,5 +1,4 @@
-if [[ ( ${include_ha_proxy} == "yes" || ${install_haproxy_on_app} == "yes" ) ]]; then
-
+if [[ ( ${include_ha_proxy} == "yes" ) || ( ${install_haproxy_on_app} == "yes" && ${is_app_node} == "yes" ) ]]; then
   echo "HAProxy Config and Install"
 
   # Write haproxy.cfg in one shot
