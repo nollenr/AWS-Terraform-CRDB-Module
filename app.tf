@@ -39,6 +39,12 @@ user_data = join("\n", [
   templatefile("${path.module}/scripts/04_install_pgworkload.sh", {
     admin_user = local.admin_username
   }),
+  # 4) Install ha_proxy on app server if selected
+  templatefile("${path.module}/scripts/ha_proxy_setup.sh", {
+    ip_list = local.ip_list,
+    include_ha_proxy = var.include_ha_proxy,
+    install_haproxy_on_app = var.install_haproxy_on_app,
+  }),
   # 5) Install multi-region demo (adds MULTIREGION_DEMO_INSTALL() to admin's .bashrc)
   templatefile("${path.module}/scripts/05_install_demo.sh", {
     admin_user       = local.admin_username
@@ -50,10 +56,5 @@ user_data = join("\n", [
     region_01        = var.aws_region_01
     include_demo     = var.include_demo  # "yes" or "no"
   }),
-  templatefile("${path.module}/scripts/ha_proxy_setup.sh", {
-    ip_list = local.ip_list,
-    include_ha_proxy = var.include_ha_proxy,
-    install_haproxy_on_app = var.install_haproxy_on_app,
-    }),
 ])
 }
