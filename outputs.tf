@@ -100,15 +100,15 @@ output "app_node_public_ip" {
   description = "The public IP address of the app node, if created."
   value = var.include_app == "yes" && var.create_ec2_instances == "yes" ? (
     # If count is 1, access the first (and only) instance in the list
-    aws_instance.app_node[0].public_ip
+    aws_instance.app[0].public_ip
   ) : (
     # If count is 0, return null (or an empty string)
     null
   )
 }
 
-output "private_ips_by_az" {
-  description = "A map where keys are Availability Zones (AZs) and values are lists of private IPs assigned to interfaces in that AZ."
-  value       = local.az_to_private_ips
+output "public_ips_by_az" {
+  description = "CockroachDB Node public IPs assigned to interfaces by AZ."
+  value       = local.az_to_public_ips
 }
 

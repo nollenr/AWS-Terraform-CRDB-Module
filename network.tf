@@ -185,3 +185,14 @@ locals {
 #   "us-east-1b": ["10.0.2.11", "10.0.2.14", "10.0.2.17"],
 #   "us-east-1c": ["10.0.3.12", "10.0.3.15", "10.0.3.18"]
 # }
+
+locals {
+  az_to_public_ips = {
+    for az in distinct(values(local.subnet_az_map)) :
+    az => [
+      for ni in aws_network_interface.crdb :
+      ni.public_ip
+      if local.subnet_az_map[ni.subnet_id] == az
+    ]
+  }
+}
