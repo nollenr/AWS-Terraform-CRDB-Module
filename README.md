@@ -8,6 +8,9 @@ AWS Terraform - CockroachDB on EC2
 - [Running the Terraform Script](#running-the-terraform-script)
 - [Connecting to the Cluster](#connecting-to-the-cockroach-cluster-from-the-app-instance)
 
+## What does this Terraform Create?
+This HCL is intended to quickly create a single or multi-node (in multiples of 3) cockroach cluster in a single region in AWS.   It is also used by the Multi-Region HCL as a module.   
+
 ## Latest Changes
 * 2025 09 08:  Install and configure HAProxy on the App Node rather than on a dedicated HAProxy node.   By setting the variable `install_haproxy_on_app` to yes, HAProxy will be downloaded and installed on the App Node.  The CRDB function on the App Node will be configured to connect through the HAProxy running on the App Node.    
 * 2025 08 27:  Add unencrypted PKCS#8 DER-encoded version of the client private key
@@ -119,7 +122,6 @@ cd AWS-Terraform-CRDB-Module/
 terraform init
 terraform plan
 terraform apply
-terraform destroy
 ```
 
 ### Destroy all Resources Created
@@ -128,7 +130,7 @@ terraform destroy
 ```
 
 
-## Files in this repo
+## Some Files in this repo
 * `terraform.tf` Sets the AWS provider and versions
 * `variables.tf` Creates the variables, definitions and defaults
 * `terraform.tfvars` Easy access to variable values (without having to change the default value in `variables.tf`)
@@ -159,12 +161,12 @@ If you created both an HAProxy and App Instance your app instance is configured 
 root@192.168.2.116:26257/defaultdb>
 ```
 
-You can also connect manually from the app instance using the following connection strings:
+You can also connect manually from a CRDB Node using the following:
 ```
 cockroach sql
 ```
 
-To connect with certs
+To connect with certs from the application node.
 ```
 cockroach-sql sql "postgresql://<local-ha-proxy-ip>:26257/defaultdb?sslmode=verify-full&sslrootcert=$HOME/certs/ca.crt&sslcert=certs/client.<admin-user-name>.crt&sslkey=certs/client.<admin-user-name>.key"
 ```
