@@ -202,3 +202,18 @@ locals {
     ]
   }
 }
+
+locals {
+  ip_pairs_by_az = {
+    for az, public_ips in local.crdb_public_ips_by_az :
+    az => [
+      for i, pub in public_ips :
+      {
+        public_ip  = pub
+        private_ip = local.az_to_private_ips[az][i]
+      }
+    ]
+  }
+}
+
+

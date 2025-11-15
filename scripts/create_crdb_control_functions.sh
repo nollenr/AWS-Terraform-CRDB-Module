@@ -1,6 +1,38 @@
 echo "Appending CRDB control functions to /home/ec2-user/.bashrc..."
 
 cat <<'EOF' >> /home/ec2-user/.bashrc
+CRDB_UPDATE_NODE_IDS() {
+  # Pull node status as TSV for easy parsing
+  local tsv
+  if ! tsv=$(cockroach node status --format=tsv $${CRDB_FLAGS:-} 2>/dev/null); then
+    echo "Error: failed to run 'cockroach node status'." >&2
+    return 1
+  fi
+
+  # Build and execute SQL updates directly
+  local sql
+  sql=$(
+    echo "$tsv" \
+    | awk -F'\t' 'NR>1 {
+        # Columns: id | address | sql_address | build | started_at | updated_at | locality | is_available | is_live
+        id=$1
+        split($2, a, ":"); ip=a[1]
+        gsub("\047", "\047\047", ip)
+        printf "UPDATE public_and_private_ip_by_az SET node_id = %d WHERE private_ip = '\''%s'\'';\n", id, ip
+      }'
+  )
+
+  if [[ -z "$sql" ]]; then
+    echo "No rows found in 'cockroach node status' output." >&2
+    return 1
+  fi
+
+  cockroach sql $${CRDB_FLAGS:-} <<SQL
+BEGIN;
+$${sql}
+COMMIT;
+SQL
+}
 
 STARTCRDB() {
   sudo systemctl start securecockroachdb

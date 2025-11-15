@@ -8,7 +8,7 @@ vpc_cidr = "192.168.7.0/24"
 # -----------------------------------------
 # CRDB Specifications
 # -----------------------------------------
-crdb_nodes = 1
+crdb_nodes = 3
 crdb_instance_type = "t4g.medium"
 crdb_store_volume_type = "gp3"
 crdb_store_volume_size = 8
@@ -23,6 +23,7 @@ crdb_enable_spot_instances = "no"
 crdb_wal_failover = "yes"
 create_db_ui_user = "no"  # <------------ setting this to yes, requires you to set an environment variable.  See the NOTE below.
 db_ui_user_name = "bob"
+create_database_node_ip_table = "yes"
 # **********************************************************
 # NOTE:  If you want to have a DB UI user created, define
 #        the shell varaible "TF_VAR_db_ui_user_password"

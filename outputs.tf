@@ -107,8 +107,14 @@ output "app_node_public_ip" {
   )
 }
 
-output "public_ips_by_az" {
-  description = "CockroachDB Node public IPs assigned to interfaces by AZ."
-  value       = local.crdb_public_ips_by_az
+# output "public_ips_by_az" {
+#   description = "CockroachDB Node public IPs assigned to interfaces by AZ."
+#   value       = local.crdb_public_ips_by_az
+# }
+
+output "ip_pairs_by_az" {
+  description = "CockroachDB Node localities both private and public IPs assigned to interfaces by AZ."
+  value       = local.ip_pairs_by_az
 }
+
 

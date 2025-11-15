@@ -39,7 +39,7 @@ resource "aws_instance" "crdb" {
     throughput = var.crdb_store_volume_type == "gp3" ? var.crdb_store_volume_throughput : null
     tags = merge(local.tags, {Name = "crdb-data", Role = "data"})
   }
-  user_data = join("\n", [
+  user_data_base64 = base64gzip(join("\n", [
     "#!/bin/bash -xe",
     templatefile("${path.module}/scripts/initialize_disks_by_order.sh", {
       wal_failover = var.crdb_wal_failover,}),
@@ -87,7 +87,17 @@ resource "aws_instance" "crdb" {
       create_db_ui_user = var.create_db_ui_user,
       db_ui_user_name = var.db_ui_user_name,
       db_ui_user_password = var.db_ui_user_password,}),
-  ])
+    templatefile("${path.module}/scripts/ip_database_table.sh", {
+      create_database_node_ip_table = var.create_database_node_ip_table,
+      run_init    = var.run_init,
+      index       = count.index,
+      crdb_nodes  = var.crdb_nodes, }),
+    templatefile("${path.module}/scripts/ip_database_table_node_update.sh", {
+      create_database_node_ip_table = var.create_database_node_ip_table,
+      run_init    = var.run_init,
+      index       = count.index,
+      crdb_nodes  = var.crdb_nodes, }),
+  ]))
 }
 
     # if [[ '${var.run_init}' = 'yes' && ${count.index + 1} -eq ${var.crdb_nodes} && ${var.install_enterprise_keys} = 'yes' ]]; then echo "Installing enterprise license keys" && su ec2-user -lc 'cockroach sql --execute "SET CLUSTER SETTING cluster.organization = '${var.cluster_organization}'; SET CLUSTER SETTING enterprise.license = '${var.enterprise_license}'"'; fi
