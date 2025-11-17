@@ -22,21 +22,20 @@ if [[ "${create_database_node_ip_table}" = "yes" ]]; then
 
   # --- Create table exactly once (on the last node), still idempotent ---
   su ec2-user -lc "cockroach sql <<'SQL'
-CREATE TABLE IF NOT EXISTS public_and_private_ip_by_az (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+CREATE TABLE IF NOT EXISTS cluster_node_ip_addresses (
   region STRING,
   az STRING,
   public_ip STRING,
   private_ip STRING,
   node_id INT,
-  UNIQUE (region, az, private_ip)
+  primary key (region, private_ip)
 );
 SQL"
 
   # --- Every node upserts its own row ---
   su ec2-user -lc "cockroach sql <<SQL
-UPSERT INTO public_and_private_ip_by_az (id, region, az, public_ip, private_ip)
-VALUES (gen_random_uuid(), '$region', '$az', NULLIF('$public_ip',''), '$private_ip');
+UPSERT INTO cluster_node_ip_addresses (region, az, public_ip, private_ip)
+VALUES ('$region', '$az', NULLIF('$public_ip',''), '$private_ip');
 SQL"
 
   echo 'IP registration complete.'
