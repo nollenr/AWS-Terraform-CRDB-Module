@@ -9,7 +9,7 @@ vpc_cidr = "192.168.7.0/24"
 # CRDB Specifications
 # -----------------------------------------
 crdb_nodes = 3
-crdb_instance_type = "t4g.medium"
+crdb_instance_type = "t4g.medium" # medium is 2 vCPU, 4 GB RAM
 crdb_store_volume_type = "gp3"
 crdb_store_volume_size = 8
 # iops and throughput are only used for gp3 volumes

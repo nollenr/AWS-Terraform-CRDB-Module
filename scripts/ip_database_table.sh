@@ -2,6 +2,7 @@
 set -euo pipefail
 
 if [[ "${create_database_node_ip_table}" = "yes" ]]; then
+  sleep 90  # wait for network to be fully up
   # --- IMDSv2 token ---
   TOKEN=$(curl -sS -X PUT "http://169.254.169.254/latest/api/token" \
     -H "X-aws-ec2-metadata-token-ttl-seconds: 60")
