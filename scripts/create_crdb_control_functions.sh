@@ -18,7 +18,7 @@ CRDB_UPDATE_NODE_IDS() {
         id=$1
         split($2, a, ":"); ip=a[1]
         gsub("\047", "\047\047", ip)
-        printf "UPDATE public_and_private_ip_by_az SET node_id = %d WHERE private_ip = '\''%s'\'';\n", id, ip
+        printf "UPDATE cluster_node_ip_addresses SET node_id = %d WHERE private_ip = '\''%s'\'';\n", id, ip
       }'
   )
 
