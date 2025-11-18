@@ -23,7 +23,6 @@ crdb_enable_spot_instances = "no"
 crdb_wal_failover = "yes"
 create_db_ui_user = "no"  # <------------ setting this to yes, requires you to set an environment variable.  See the NOTE below.
 db_ui_user_name = "bob"
-create_database_node_ip_table = "yes"
 # **********************************************************
 # NOTE:  If you want to have a DB UI user created, define
 #        the shell varaible "TF_VAR_db_ui_user_password"
@@ -31,6 +30,7 @@ create_database_node_ip_table = "yes"
 #        automatically be picked up by this HCL and applied
 # **********************************************************
 # db_ui_user_password = ""
+create_database_node_ip_table = "yes"
 cache = 0.35             # Must be a decimal value.
 max_sql_memory = 0.35    # Must be a decimal value.
 systemd_restart_option = "no"

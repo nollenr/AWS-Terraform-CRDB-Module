@@ -265,6 +265,14 @@
       default     = ""
     }    
 
+  # Be sure to do the following in your environment if you plan on installing the license keys
+  #   export TF_VAR_db_ui_user_password='your password'
+    variable "db_ui_user_password"{
+      description = "An admin with this password will be created if 'create_db_ui_user=yes'"
+      type        = string
+      default     = ""
+    }    
+
     variable "create_database_node_ip_table" {
       description = "'yes' or 'no' to a table in the database that lists the public and private IPs of the cluster."
       type        = string
@@ -274,14 +282,6 @@
         error_message = "Valid value for variable 'create_database_node_ip_table' is : 'yes' or 'no'"        
       }      
     }  
-
-  # Be sure to do the following in your environment if you plan on installing the license keys
-  #   export TF_VAR_db_ui_user_password='your password'
-    variable "db_ui_user_password"{
-      description = "An admin with this password will be created if 'create_db_ui_user=yes'"
-      type        = string
-      default     = ""
-    }    
 
     variable "cache"{
       description = "The total size for caches, shared evenly if there are multiple storage devices.  Provide a decimal value only.  This is provided as part of the 'cockroach start'.  Example: 0.25"
